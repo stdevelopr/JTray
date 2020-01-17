@@ -1,0 +1,10 @@
+# whe are using version 3 of docker-compose
+version: "3"
+
+# services to be controlled
+services:
+  db:
+    # build the service 'db' from the folder /backend/db where there is a Dockerfile
+    build: ./backend/db
+    ports:
+      - "27017:27017"
