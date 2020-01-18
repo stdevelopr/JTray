@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from pymongo import MongoClient
 from flask_graphql import GraphQLView
 import graphene
@@ -38,7 +38,8 @@ def main():
     query = '{card{title}}'
     result = schema.execute(query)
     title = result.data['card']['title']
-    return title
+    print(title)
+    return render_template('index.html')
 
 
 
