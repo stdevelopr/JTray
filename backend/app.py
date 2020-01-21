@@ -41,6 +41,10 @@ def main():
     print(title)
     return render_template('index.html')
 
+def before_request():
+    app.jinja_env.cache = {}
+
+app.before_request(before_request)
 
 
 if __name__ == "__main__":
