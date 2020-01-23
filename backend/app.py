@@ -6,21 +6,41 @@ import graphene
 app = Flask(__name__)
 
 
+client = MongoClient("mongodb://localhost:27017")
+db = client.Jtray
+
+
 # GraphQL Schema
 ######################################################################
 
 class Card(graphene.ObjectType):
-    title = graphene.String()
+    text = graphene.String()
 
 class Query(graphene.ObjectType):
     card = graphene.Field(Card)
 
 
     def resolve_card(self, info):
-        return Card(title="teste")
+        return Card(text="teste")
+
+class CreateCard(graphene.Mutation):
+    class Arguments:
+        text= graphene.String()
+    
+    ok = graphene.Boolean()
+    card = graphene.Field(Card)
+
+    def mutate(self, info, text):
+        card = Card(text=text)
+        ok = True
+        db["cards"].insert({"text":text})
+        return CreateCard(card=card, ok=ok)
 
 
-schema = graphene.Schema(query=Query)
+class Mutation(graphene.ObjectType):
+    create_card = CreateCard.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
 
 ######################################################################
 
