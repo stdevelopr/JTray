@@ -63,8 +63,9 @@ class AddCard(graphene.Mutation):
     card = graphene.Field(Card)
 
     def mutate(self, info, trayId, text):
-        tray = db.Trays.find_one_and_update({'_id': ObjectId(trayId)}, {"$push":{"cards":{"_id":ObjectId(), "text":text}}})
-        card = Card(text=text)
+        cardId = ObjectId()
+        tray = db.Trays.find_one_and_update({'_id': ObjectId(trayId)}, {"$push":{"cards":{"_id":cardId, "text":text}}})
+        card = Card(_id= cardId, text=text)
         ok = True
         return AddCard(card=card, ok=ok)
 
