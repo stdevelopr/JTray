@@ -41,6 +41,9 @@ class Query(graphene.ObjectType):
     def resolve_allTrays(self, info):
         return list(db.Trays.find({}))
 
+####################################################
+# MUTATIONS
+#################################################
 class AddTray(graphene.Mutation):
     class Arguments:
         title = graphene.String()
@@ -69,10 +72,50 @@ class AddCard(graphene.Mutation):
         ok = True
         return AddCard(card=card, ok=ok)
 
+class SwapCard(graphene.Mutation):
+    class Arguments:
+        fromTrayId = graphene.String()
+        toTrayId = graphene.String()
+        fromCardIndex= graphene.Int()
+        toCardIndex = graphene.Int()
+
+    fromTrayId = graphene.String() 
+    toTrayId = graphene.String()
+    fromTrayCards = graphene.List(Card)
+    toTrayCards = graphene.List(Card)
+
+    def mutate(self, info, fromTrayId, toTrayId, fromCardIndex, toCardIndex):
+        if(fromTrayId==toTrayId):
+            fromTray = db.Trays.find_one({'_id': ObjectId(fromTrayId)})
+            fromTrayCards = fromTray['cards'].copy()
+            toTrayCards = fromTray['cards']
+            temp = toTrayCards[fromCardIndex]
+            toTrayCards[fromCardIndex] = toTrayCards[toCardIndex]
+            toTrayCards[toCardIndex] = temp
+            db.Trays.update({'_id': ObjectId(fromTrayId)}, {"$set":{"cards":toTrayCards}})
+            return SwapCard(fromTrayId=fromTrayId, toTrayId=toTrayId, 
+                            fromTrayCards=fromTrayCards, toTrayCards=toTrayCards)
+        
+        else:
+            fromTray = db.Trays.find_one({'_id': ObjectId(fromTrayId)})
+            toTray = db.Trays.find_one({'_id': ObjectId(toTrayId)})
+            fromTrayCards = fromTray['cards']
+            toTrayCards = toTray['cards']
+            toTrayCards.insert(toCardIndex, fromTrayCards[fromCardIndex])
+            del(fromTrayCards[fromCardIndex])
+            db.Trays.update({'_id': ObjectId(fromTrayId)}, {"$set":{"cards":fromTrayCards}})
+            db.Trays.update({'_id': ObjectId(toTrayId)}, {"$set":{"cards":toTrayCards}})
+            return SwapCard(fromTrayId=fromTrayId, toTrayId=toTrayId,
+                            fromTrayCards=fromTrayCards, toTrayCards=toTrayCards)
+            
+
+
+
 
 class Mutation(graphene.ObjectType):
     addCard = AddCard.Field()
     addTray = AddTray.Field()
+    swapCard = SwapCard.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
 
