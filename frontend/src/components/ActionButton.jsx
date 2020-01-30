@@ -7,8 +7,12 @@ import { useApolloClient } from "@apollo/react-hooks";
 // import { ButtonGroup } from "@material-ui/core";
 import { Card, Button } from "@material-ui/core";
 import TextareaAutosize from "react-textarea-autosize";
+import { GET_TRAYS } from "../graphql/queries.graphql";
+import { ADD_CARD, ADD_TRAY } from "../graphql/mutations.graphql";
 import styled from "styled-components";
 
+// styled components
+// ###############################################
 const ButtonContainer = styled.div`
   display: flex;
   align-items: center;
@@ -24,39 +28,7 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
 `;
-
-const ADD_CARD = gql`
-  mutation addCard($trayId: String!, $text: String!) {
-    addCard(trayId: $trayId, text: $text) {
-      ok
-      card {
-        id
-        text
-      }
-    }
-  }
-`;
-
-const ADD_TRAY = gql`
-  mutation addTray($title: String!) {
-    addTray(title: $title) {
-      ok
-    }
-  }
-`;
-
-const GET_LIST = gql`
-  query allTrays @client {
-    allTrays {
-      id
-      title
-      cards {
-        id
-        text
-      }
-    }
-  }
-`;
+// #####################################################
 
 export const AddButton = ({ list, trayId }) => {
   const [openState, setOpenState] = useState(false);
@@ -73,38 +45,26 @@ export const AddButton = ({ list, trayId }) => {
   const renderButton = () => (
     <ButtonContainer onClick={toggleForm}>
       <Icon>add</Icon>
-      <p>{list ? "Add another list" : "Add another card"}</p>
+      <p>{list ? "Add another tray" : "Add another card"}</p>
     </ButtonContainer>
   );
 
   const resetForm = () => {
-    // client.writeData({ data: { allTrays: "Hop" } });
     setTextAreaState("");
     toggleForm();
   };
 
-  const updateCache = (client, { data: { addCard } }) => {
-    console.log("hop");
+  const updateTraysCache = (client, { data: { addTray } }) => {
     const data = client.readQuery({
-      query: GET_LIST
+      query: GET_TRAYS
     });
 
     let data_copy = JSON.parse(JSON.stringify(data));
 
-    data_copy.allTrays[1].cards.push(addCard.card);
-    // let data2 = { ...data };
-    // let cards = [...data.allTrays[0].cards];
-    // cards.push(addCard.card);
-    // let newTray = {
-    //   ...data.allTrays[0],
-    //   cards: cards
-    // };
-    // const newData = {
-    //   allTrays: [newTray]
-    // };
-    // client.writeData({ richard: "Hop" });
+    data_copy.allTrays.push(addTray);
+
     client.writeQuery({
-      query: GET_LIST,
+      query: GET_TRAYS,
       data: data_copy
     });
     resetForm();
@@ -114,13 +74,16 @@ export const AddButton = ({ list, trayId }) => {
     // toggleForm();
     let retun = addCardHook({
       variables: { trayId: trayId, text: textAreaState },
-      update: updateCache
+      update: resetForm
     });
   };
 
   const addTray = () => {
     // console.log(textAreaState);
-    addTrayHook({ variables: { title: textAreaState } });
+    addTrayHook({
+      variables: { title: textAreaState },
+      update: updateTraysCache
+    });
   };
 
   const renderForm = () => (
@@ -162,7 +125,7 @@ export const AddButton = ({ list, trayId }) => {
         </Button>
         <Icon
           style={{ marginLeft: "8px", cursor: "pointer" }}
-          onClick={resetForm}
+          onMouseDown={resetForm}
         >
           close
         </Icon>

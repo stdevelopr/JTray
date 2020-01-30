@@ -1,10 +1,23 @@
-import React, { useContext } from "react";
+import React from "react";
 import { ListBoard } from "./ListBoard.jsx";
-import { ListProvider } from "../ListContext";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
+import { InMemoryCache } from "apollo-cache-inmemory";
+
+const cache = new InMemoryCache({
+  // map objects wit same id after mutations to atualize the cache
+  dataIdFromObject: object => {
+    switch (object.__typename) {
+      case "Tray":
+      case "AddCard":
+      case "AddTray":
+        return object.id;
+    }
+  }
+});
 
 const client = new ApolloClient({
+  cache,
   uri: "http://127.0.0.1:5000/graphql",
   resolvers: {}
 });
@@ -13,9 +26,7 @@ const App = () => {
   return (
     <div>
       <ApolloProvider client={client}>
-        <ListProvider>
-          <ListBoard />
-        </ListProvider>
+        <ListBoard />
       </ApolloProvider>
     </div>
   );
