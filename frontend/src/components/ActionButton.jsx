@@ -38,22 +38,18 @@ export const AddButton = ({ list, trayId }) => {
 
   const client = useApolloClient();
 
+  // fucntion to open and close the text area
   const toggleForm = () => {
     setOpenState(!openState);
   };
 
-  const renderButton = () => (
-    <ButtonContainer onClick={toggleForm}>
-      <Icon>add</Icon>
-      <p>{list ? "Add another tray" : "Add another card"}</p>
-    </ButtonContainer>
-  );
-
+  // function to reset the text area and close it
   const resetForm = () => {
     setTextAreaState("");
     toggleForm();
   };
 
+  // function to get all the trays from cache and add a new one
   const updateTraysCache = (client, { data: { addTray } }) => {
     const data = client.readQuery({
       query: GET_TRAYS
@@ -70,22 +66,36 @@ export const AddButton = ({ list, trayId }) => {
     resetForm();
   };
 
+  // add a new card and automatically update the cache by the id mapping
   const addCard = (trayId, textAreaState) => {
-    // toggleForm();
     let retun = addCardHook({
       variables: { trayId: trayId, text: textAreaState },
       update: resetForm
     });
   };
 
+  // add a new tray and update the cache through a custom function
   const addTray = () => {
-    // console.log(textAreaState);
     addTrayHook({
       variables: { title: textAreaState },
       update: updateTraysCache
     });
   };
 
+  // render a button to insert new item
+  const renderButton = () => (
+    <ButtonContainer onClick={toggleForm}>
+      <Icon>add</Icon>
+      <p>{list ? "Add another tray" : "Add another card"}</p>
+    </ButtonContainer>
+  );
+
+  // variable to display a text inside the text area
+  const placeholder = list
+    ? "Enter list title..."
+    : "Enter a text for this card...";
+
+  // render a text area
   const renderForm = () => (
     <div>
       <Card
@@ -132,9 +142,6 @@ export const AddButton = ({ list, trayId }) => {
       </ButtonGroup>
     </div>
   );
-  const placeholder = list
-    ? "Enter list title..."
-    : "Enter a text for this card...";
 
   return openState ? renderForm() : renderButton();
 };

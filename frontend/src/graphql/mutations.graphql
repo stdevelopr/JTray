@@ -32,7 +32,6 @@ export const SWAP_CARD = gql`
     $fromCardIndex: Int!
     $toCardIndex: Int!
   ) {
-    __typename
     swapCard(
       fromTrayId: $fromTrayId
       toTrayId: $toTrayId
@@ -40,14 +39,11 @@ export const SWAP_CARD = gql`
       toCardIndex: $toCardIndex
     ) {
       fromTrayId
-      __typename
       fromTrayCards {
-        __typename
         id
         text
       }
       toTrayId
-      __typename
       toTrayCards {
         id
         text

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { JtrayCard } from "./Card.jsx";
 import styled from "styled-components";
 import { AddButton } from "./ActionButton.jsx";
@@ -7,6 +7,9 @@ import { useQuery } from "@apollo/react-hooks";
 import { useMutation } from "@apollo/react-hooks";
 import { GET_TRAYS } from "../graphql/queries.graphql";
 import { SWAP_CARD } from "../graphql/mutations.graphql";
+import { useApolloClient } from "@apollo/react-hooks";
+
+import gql from "graphql-tag";
 
 // styled components
 // #########################################
@@ -29,18 +32,106 @@ const CardContainer = styled.div`
 `;
 // #######################################
 
+// function to render the board based on array of trays
+const renderLists = lists => {
+  return (
+    <DragDropContext
+      onBeforeDragStart={() => console.log("onBeforeDragStart")}
+      onDragStart={() => console.log("Drag Start")}
+      onDragEnd={() => console.log("Drag END")}
+      onDragUpdate={() => console.log("Drag UPDATE")}
+    >
+      <Droppable droppableId="all-lists" type="list" direction="horizontal">
+        {provided => (
+          <Board {...provided.droppableProps} ref={provided.innerRef}>
+            {lists.map((list, index) => (
+              <Draggable
+                draggableId={String(list.id)}
+                index={index}
+                key={list.id}
+              >
+                {provided => (
+                  <ListContainer
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <Droppable droppableId={String(list.id)}>
+                      {provided => (
+                        <div
+                          key={list.id}
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                        >
+                          <h3>{list.title}</h3>
+                          {list.cards.map((card, index) => (
+                            <Draggable
+                              draggableId={String(card.id)}
+                              index={index}
+                              key={card.id}
+                            >
+                              {provided => (
+                                <CardContainer
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <JtrayCard text={card.text} key={card.id} />
+                                </CardContainer>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                          <AddButton trayId={list.id} />
+                        </div>
+                      )}
+                    </Droppable>
+                  </ListContainer>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+            <AddButton list />
+          </Board>
+        )}
+      </Droppable>
+    </DragDropContext>
+  );
+};
+
+// React component
 export const ListBoard = () => {
-  const [swapCards, ob] = useMutation(SWAP_CARD);
   const { loading, error, data } = useQuery(GET_TRAYS);
-  console.log("ji", ob, data);
+  console.log("hoook query", data);
+  const [swapCards, ob] = useMutation(SWAP_CARD);
+  console.log("hoook mutation", ob);
+
+  const client = useApolloClient();
 
   const swapCacheUpdate = (client, { data: { swapCard } }) => {
-    console.log("client", client);
-    console.log("swapCardd", swapCard);
+    const data = client.readQuery({
+      query: GET_TRAYS
+    });
+
+    let data_copy = JSON.parse(JSON.stringify(data));
+
+    data_copy.allTrays.forEach((element, i) => {
+      if (element.id == swapCard.fromTrayId) {
+        data_copy.allTrays[i].cards = swapCard.toTrayCards;
+      }
+    });
+
+    client.writeQuery({
+      query: GET_TRAYS,
+      data: data_copy
+    });
   };
 
+  // ###################################################################
+  // TODO: pass to the function without lag
   const onDragEnd = result => {
     const { destination, source, draggableId, type } = result;
+
     if (destination) {
       swapCards({
         variables: {
@@ -53,66 +144,10 @@ export const ListBoard = () => {
       });
     }
   };
+  // ##############################################################
   if (!loading) {
+    console.log("reennnnnderrrrinnnn after loading query");
     let lists = data["allTrays"];
-
-    return (
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="all-lists" type="list" direction="horizontal">
-          {provided => (
-            <Board {...provided.droppableProps} ref={provided.innerRef}>
-              {lists.map((list, index) => (
-                <Draggable
-                  draggableId={String(list.id)}
-                  index={index}
-                  key={list.id}
-                >
-                  {provided => (
-                    <ListContainer
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <Droppable droppableId={String(list.id)}>
-                        {provided => (
-                          <div
-                            key={list.id}
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                          >
-                            <h3>{list.title}</h3>
-                            {list.cards.map((card, index) => (
-                              <Draggable
-                                draggableId={String(card.id)}
-                                index={index}
-                                key={card.id}
-                              >
-                                {provided => (
-                                  <CardContainer
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                  >
-                                    <JtrayCard text={card.text} key={card.id} />
-                                  </CardContainer>
-                                )}
-                              </Draggable>
-                            ))}
-                            {provided.placeholder}
-                            <AddButton trayId={list.id} />
-                          </div>
-                        )}
-                      </Droppable>
-                    </ListContainer>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-              <AddButton list />
-            </Board>
-          )}
-        </Droppable>
-      </DragDropContext>
-    );
+    return renderLists(lists);
   } else return "OK";
 };
