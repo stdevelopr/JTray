@@ -38,15 +38,12 @@ export const SWAP_CARD = gql`
       fromCardIndex: $fromCardIndex
       toCardIndex: $toCardIndex
     ) {
-      fromTrayId
-      fromTrayCards {
+      trays{
+      id
+      cards{
         id
         text
       }
-      toTrayId
-      toTrayCards {
-        id
-        text
       }
     }
   }

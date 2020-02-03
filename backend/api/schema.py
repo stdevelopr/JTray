@@ -33,6 +33,9 @@ class Query(graphene.ObjectType):
 # MUTATIONS
 #################################################
 class AddTray(graphene.Mutation):
+    """
+    Returns a new empty tray: Tray(id, title, cards:[])
+    """
     class Arguments:
         title = graphene.String()
     
@@ -64,7 +67,7 @@ class AddCard(graphene.Mutation):
         cardId = ObjectId()
         # get the atualized tray after inserting the card
         newTray = db.Trays.find_one_and_update({'_id': ObjectId(trayId)}, {"$push":{"cards":{"_id":cardId, "text":text}}}, 
-        return_document=ReturnDocument.AFTER)
+            return_document=ReturnDocument.AFTER)
 
         return Tray(**newTray)
 
@@ -75,34 +78,40 @@ class SwapCard(graphene.Mutation):
         fromCardIndex= graphene.Int()
         toCardIndex = graphene.Int()
 
-    fromTrayId = graphene.String() 
-    toTrayId = graphene.String()
-    fromTrayCards = graphene.List(Card)
-    toTrayCards = graphene.List(Card)
+
+    trays = graphene.List(Tray)
 
     def mutate(self, info, fromTrayId, toTrayId, fromCardIndex, toCardIndex):
         if(fromTrayId==toTrayId):
+            # get the cards of the tray
             fromTray = db.Trays.find_one({'_id': ObjectId(fromTrayId)})
             fromTrayCards = fromTray['cards'].copy()
-            toTrayCards = fromTray['cards']
-            temp = toTrayCards[fromCardIndex]
-            toTrayCards[fromCardIndex] = toTrayCards[toCardIndex]
-            toTrayCards[toCardIndex] = temp
-            db.Trays.update({'_id': ObjectId(fromTrayId)}, {"$set":{"cards":toTrayCards}})
-            return SwapCard(fromTrayId=fromTrayId, toTrayId=toTrayId, 
-                            fromTrayCards=fromTrayCards, toTrayCards=toTrayCards)
+            # remove the card from the original position
+            fromCard = fromTrayCards.pop(fromCardIndex)
+            # add the card to the destination index
+            fromTrayCards.insert(toCardIndex, fromCard)
+            # update de database
+            db.Trays.update({'_id': ObjectId(fromTrayId)}, {"$set":{"cards":fromTrayCards}})
+            return SwapCard(trays= [Tray(_id=fromTrayId, cards=fromTrayCards)])
         
         else:
+            # get the cards of the trays
             fromTray = db.Trays.find_one({'_id': ObjectId(fromTrayId)})
             toTray = db.Trays.find_one({'_id': ObjectId(toTrayId)})
-            fromTrayCards = fromTray['cards']
-            toTrayCards = toTray['cards']
-            toTrayCards.insert(toCardIndex, fromTrayCards[fromCardIndex])
-            del(fromTrayCards[fromCardIndex])
+            fromTrayCards = fromTray['cards'].copy()
+            toTrayCards = toTray['cards'].copy()
+
+            # remove the card from the original position
+            fromCard = fromTrayCards.pop(fromCardIndex)
+
+            # add the card to the destination index
+            toTrayCards.insert(toCardIndex, fromCard)
+
+            # update the database
             db.Trays.update({'_id': ObjectId(fromTrayId)}, {"$set":{"cards":fromTrayCards}})
             db.Trays.update({'_id': ObjectId(toTrayId)}, {"$set":{"cards":toTrayCards}})
-            return SwapCard(fromTrayId=fromTrayId, toTrayId=toTrayId,
-                            fromTrayCards=fromTrayCards, toTrayCards=toTrayCards)
+            return SwapCard(trays= [Tray(_id=fromTrayId, cards=fromTrayCards), 
+                                    Tray(_id=toTrayId, cards=toTrayCards)])
             
 
 

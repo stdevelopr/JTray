@@ -11,6 +11,7 @@ const cache = new InMemoryCache({
       case "Tray":
       case "AddCard":
       case "AddTray":
+      case "SwapCard":
         return object.id;
     }
   }
