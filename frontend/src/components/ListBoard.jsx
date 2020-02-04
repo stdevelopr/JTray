@@ -6,7 +6,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useQuery } from "@apollo/react-hooks";
 import { useMutation } from "@apollo/react-hooks";
 import { GET_TRAYS } from "../graphql/queries.graphql";
-import { SWAP_CARD } from "../graphql/mutations.graphql";
+import { SWAP_CARD, SWAP_TRAY } from "../graphql/mutations.graphql";
 import { useApolloClient } from "@apollo/react-hooks";
 
 import gql from "graphql-tag";
@@ -99,85 +99,121 @@ const renderLists = (lists, onDragEnd) => {
     </DragDropContext>
   );
 };
+const optimisticResponseTray = (
+  data,
+  draggableId,
+  sourceIndex,
+  destinationIndex
+) => {
+  console.log("ressspppppp");
+};
+
+// function to simulate the response from the server to an drag and drop action
+const optimisticResponse = (data, source, destination) => {
+  // variable to simulate the response from the server
+  let optimisticResponse = {};
+
+  // create a pre response based on the action
+  if (destination.droppableId == source.droppableId) {
+    // get the cards from the tray selected tray
+    const cards = data.allTrays.filter(e => e.id == source.droppableId)[0]
+      .cards;
+    let cardsCopy = [...cards];
+    // copy the value and remove the dragged card
+    let fromCard = cardsCopy[source.index];
+    cardsCopy.splice(source.index, 1);
+    // add the card to the destination index
+    cardsCopy.splice(destination.index, 0, fromCard);
+
+    // this is the expected response from the server if the card is dropped in the same tray
+    optimisticResponse = {
+      swapCard: {
+        __typename: "SwapCard",
+        trays: [
+          { id: source.droppableId, cards: cardsCopy, __typename: "Tray" }
+        ]
+      }
+    };
+  } else {
+    // get the trays where the action is happening
+    const fromTrayCards = data.allTrays.filter(
+      e => e.id == source.droppableId
+    )[0].cards;
+    const toTrayCards = data.allTrays.filter(
+      e => e.id == destination.droppableId
+    )[0].cards;
+    let fromCardsCopy = [...fromTrayCards];
+    let toCardsCopy = [...toTrayCards];
+
+    // copy the value and remove the dragged card
+    let fromCard = fromCardsCopy[source.index];
+    fromCardsCopy.splice(source.index, 1);
+
+    // add the card to the destination array index
+    toCardsCopy.splice(destination.index, 0, fromCard);
+
+    // this is the expected response from the server if the card is dropped in another tray
+    optimisticResponse = {
+      swapCard: {
+        __typename: "SwapCard",
+        trays: [
+          {
+            id: source.droppableId,
+            cards: fromCardsCopy,
+            __typename: "Tray"
+          },
+          {
+            id: destination.droppableId,
+            cards: toCardsCopy,
+            __typename: "Tray"
+          }
+        ]
+      }
+    };
+  }
+
+  return optimisticResponse;
+};
 
 // React component
 export const ListBoard = () => {
   const { loading, error, data } = useQuery(GET_TRAYS);
   const [swapCards, ob] = useMutation(SWAP_CARD);
+  const [swapTrays, ob2] = useMutation(SWAP_TRAY);
 
   const client = useApolloClient();
 
+  // function to execute at the end of a drag and drop action
   const onDragEnd = result => {
     const { destination, source, draggableId, type } = result;
 
-    // read the trays from cache
+    console.log("type", type, source, draggableId, destination);
+
+    // read the trays from cache to construct an expected response
     const data = client.readQuery({
       query: GET_TRAYS
     });
 
-    // variable to simulate the response from the server
-    let optimisticResponse = {};
-
-    // create a pre response based on the action
-    if (destination.droppableId == source.droppableId) {
-      // get the cards from the tray selected tray
-      const cards = data.allTrays.filter(e => e.id == source.droppableId)[0]
-        .cards;
-      let cardsCopy = [...cards];
-      // copy the value and remove the dragged card
-      let fromCard = cardsCopy[source.index];
-      cardsCopy.splice(source.index, 1);
-      // add the card to the destination index
-      cardsCopy.splice(destination.index, 0, fromCard);
-
-      // this is the expected response from the server if the card is dropped in the same tray
-      optimisticResponse = {
-        swapCard: {
-          __typename: "SwapCard",
-          trays: [
-            { id: source.droppableId, cards: cardsCopy, __typename: "Tray" }
-          ]
-        }
-      };
-    } else {
-      // get the trays where the action is happening
-      const fromTrayCards = data.allTrays.filter(
-        e => e.id == source.droppableId
-      )[0].cards;
-      const toTrayCards = data.allTrays.filter(
-        e => e.id == destination.droppableId
-      )[0].cards;
-      let fromCardsCopy = [...fromTrayCards];
-      let toCardsCopy = [...toTrayCards];
-
-      // copy the value and remove the dragged card
-      let fromCard = fromCardsCopy[source.index];
-      fromCardsCopy.splice(source.index, 1);
-
-      // add the card to the destination array index
-      toCardsCopy.splice(destination.index, 0, fromCard);
-
-      // this is the expected response from the server if the card is dropped in another tray
-      optimisticResponse = {
-        swapCard: {
-          __typename: "SwapCard",
-          trays: [
-            {
-              id: source.droppableId,
-              cards: fromCardsCopy,
-              __typename: "Tray"
-            },
-            {
-              id: destination.droppableId,
-              cards: toCardsCopy,
-              __typename: "Tray"
-            }
-          ]
-        }
-      };
+    // if the action is on lists
+    if (type == "list" && source.index != destination.index) {
+      console.log("uuuuuuuuuuuuuuuuuu", draggableId);
+      swapTrays({
+        variables: {
+          trayId: draggableId,
+          fromIndex: source.index,
+          toIndex: destination.index
+        },
+        optimisticResponse: optimisticResponseTray(
+          data,
+          draggableId,
+          source.index,
+          destination.index
+        )
+      });
     }
 
-    if (destination) {
+    // if the action is on cards
+    if (destination && type == "DEFAULT") {
       swapCards({
         variables: {
           fromTrayId: source.droppableId,
@@ -185,11 +221,12 @@ export const ListBoard = () => {
           fromCardIndex: source.index,
           toCardIndex: destination.index
         },
-        optimisticResponse: optimisticResponse
+        optimisticResponse: optimisticResponse(data, source, destination)
       });
     }
   };
-  if (!loading) {
-    return renderLists(data["allTrays"], onDragEnd);
-  } else return "loading...";
+  if (loading) return "loading...";
+  if (error) return "error :(";
+
+  return renderLists(data["allTrays"], onDragEnd);
 };

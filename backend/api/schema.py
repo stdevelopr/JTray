@@ -26,7 +26,7 @@ class Query(graphene.ObjectType):
     allTrays = graphene.List(Tray)
 
     def resolve_allTrays(self, info):
-        return list(db.Trays.find({}))
+        return list(db.Trays.find({}).sort("index",1))
 
 
 ####################################################
@@ -40,13 +40,21 @@ class AddTray(graphene.Mutation):
         title = graphene.String()
     
     _id = graphene.String(name='id')
+    index = graphene.String()
     title = graphene.String()
     cards = graphene.List(Card)
-    # ok = graphene.Boolean()
 
     def mutate(self, info, title):
-        # tray = Tray(title=title)
-        new = db["Trays"].insert_one({"title": title, "cards":[]})
+        # get the max index of the trays
+        max_index = db["Trays"].find({}).sort([("index", -1)]).limit(1)
+        # if there is no documents set the index to 0
+        if max_index.count() == 0:
+            index = "0"
+            # else get the max value and increment one
+        else:
+            index = str(int(max_index[0]['index']) + 1)
+        # write to db
+        new = db["Trays"].insert_one({"index": index,"title": title, "cards":[]})
 
         return Tray(_id= new.inserted_id, title = title, cards= [])
 
@@ -70,6 +78,47 @@ class AddCard(graphene.Mutation):
             return_document=ReturnDocument.AFTER)
 
         return Tray(**newTray)
+
+
+class SwapTray(graphene.Mutation):
+    """
+    swap to trays and return a new list with all trays
+    """
+    class Arguments:
+        trayId = graphene.String()
+        fromIndex = graphene.String()
+        toIndex = graphene.String()
+
+    allTrays = graphene.List(Tray)
+
+    def mutate(self, info, trayId, fromIndex, toIndex):
+
+        # get the sorted trays as rendered by starting the app
+        trays = db.Trays.find({}).sort("index",1)
+        # loop the trays and contruct a dict with the trays and a list with the indexes
+        index_list = []
+        tray_list = []
+        for tray in trays:
+            tray_list.append(tray)
+            index_list.append(tray['index'])
+
+        # rearange the index of the list
+        dragged_index = index_list.pop(int(fromIndex))
+        index_list.insert(int(toIndex), dragged_index)
+
+        # modify the trays index according to the index list
+        for index, tray_index in enumerate(index_list):
+            tray_list[int(tray_index)]['index'] = index
+
+        # update db
+        for tray in tray_list:
+            db.Trays.find_one_and_update({'_id': ObjectId(tray["_id"])}, {"$set":{"index":tray["index"]}})
+
+
+        # return the dictionary
+        return list(db.Trays.find({}).sort("index",1))
+    
+
 
 class SwapCard(graphene.Mutation):
     class Arguments:
@@ -121,5 +170,6 @@ class Mutation(graphene.ObjectType):
     addCard = AddCard.Field()
     addTray = AddTray.Field()
     swapCard = SwapCard.Field()
+    swapTray = SwapTray.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
