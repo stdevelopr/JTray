@@ -4,6 +4,7 @@ from api.schema import schema
 
 
 app = Flask(__name__)
+# app.config["CACHE_TYPE"] = "null"
 
 # Endpoint to run queries
 app.add_url_rule("/graphql", view_func=GraphQLView.as_view(

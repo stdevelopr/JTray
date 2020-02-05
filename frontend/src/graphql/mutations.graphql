@@ -6,7 +6,7 @@ export const ADD_TRAY = gql`
       id
       title
       cards{
-          id
+        id
       }
     }
   }
@@ -28,17 +28,17 @@ export const ADD_CARD = gql`
 
 export const SWAP_TRAY = gql`
   mutation swapTrayMutation(
-    $trayId: String!
     $fromIndex: String!
     $toIndex: String!
   ) {
     swapTray(
-      trayId: $trayId
       fromIndex: $fromIndex
       toIndex: $toIndex
     ) {
       allTrays{
       id
+      title
+      index
       cards{
         id
         text

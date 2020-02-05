@@ -14,6 +14,7 @@ class Card(graphene.ObjectType):
 
 class Tray(graphene.ObjectType):
     _id = graphene.String(name='id')
+    index = graphene.String()
     title = graphene.String()
     cards = graphene.List(Card)
 
@@ -26,7 +27,11 @@ class Query(graphene.ObjectType):
     allTrays = graphene.List(Tray)
 
     def resolve_allTrays(self, info):
-        return list(db.Trays.find({}).sort("index",1))
+        trays = db.Trays.find({}).sort("index",1)
+        trays_list = []
+        for tray in trays:
+            trays_list.append(tray)
+        return trays_list
 
 
 ####################################################
@@ -56,7 +61,7 @@ class AddTray(graphene.Mutation):
         # write to db
         new = db["Trays"].insert_one({"index": index,"title": title, "cards":[]})
 
-        return Tray(_id= new.inserted_id, title = title, cards= [])
+        return Tray(_id= new.inserted_id, index=index, title = title, cards= [])
 
 class AddCard(graphene.Mutation):
     """
@@ -75,7 +80,7 @@ class AddCard(graphene.Mutation):
         cardId = ObjectId()
         # get the atualized tray after inserting the card
         newTray = db.Trays.find_one_and_update({'_id': ObjectId(trayId)}, {"$push":{"cards":{"_id":cardId, "text":text}}}, 
-            return_document=ReturnDocument.AFTER)
+            return_document=ReturnDocument.AFTER, projection=['id', 'title', 'cards'])
 
         return Tray(**newTray)
 
@@ -85,13 +90,13 @@ class SwapTray(graphene.Mutation):
     swap to trays and return a new list with all trays
     """
     class Arguments:
-        trayId = graphene.String()
+        # trayId = graphene.String()
         fromIndex = graphene.String()
         toIndex = graphene.String()
 
     allTrays = graphene.List(Tray)
 
-    def mutate(self, info, trayId, fromIndex, toIndex):
+    def mutate(self, info, fromIndex, toIndex):
 
         # get the sorted trays as rendered by starting the app
         trays = db.Trays.find({}).sort("index",1)
@@ -114,9 +119,7 @@ class SwapTray(graphene.Mutation):
         for tray in tray_list:
             db.Trays.find_one_and_update({'_id': ObjectId(tray["_id"])}, {"$set":{"index":tray["index"]}})
 
-
-        # return the dictionary
-        return list(db.Trays.find({}).sort("index",1))
+        return SwapTray(allTrays=tray_list)
     
 
 

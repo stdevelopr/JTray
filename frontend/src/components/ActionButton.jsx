@@ -72,6 +72,7 @@ export const AddButton = ({ list, trayId }) => {
       variables: { trayId: trayId, text: textAreaState },
       update: resetForm
     });
+    console.log("kkklll", retun);
   };
 
   // add a new tray and update the cache through a custom function

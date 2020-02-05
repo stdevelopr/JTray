@@ -34,14 +34,8 @@ const CardContainer = styled.div`
 
 // function to render the board based on array of trays
 const renderLists = (lists, onDragEnd) => {
-  // console.log("renderingggsg", list);
   return (
-    <DragDropContext
-      // onBeforeDragStart={() => console.log("onBeforeDragStart")}
-      // onDragStart={() => console.log("Drag Start")}
-      onDragEnd={onDragEnd}
-      // onDragUpdate={() => console.log("Drag UPDATE")}
-    >
+    <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-lists" type="list" direction="horizontal">
         {provided => (
           <Board {...provided.droppableProps} ref={provided.innerRef}>
@@ -99,17 +93,9 @@ const renderLists = (lists, onDragEnd) => {
     </DragDropContext>
   );
 };
-const optimisticResponseTray = (
-  data,
-  draggableId,
-  sourceIndex,
-  destinationIndex
-) => {
-  console.log("ressspppppp");
-};
 
 // function to simulate the response from the server to an drag and drop action
-const optimisticResponse = (data, source, destination) => {
+const optimisticResponseCard = (data, source, destination) => {
   // variable to simulate the response from the server
   let optimisticResponse = {};
 
@@ -175,37 +161,48 @@ const optimisticResponse = (data, source, destination) => {
   return optimisticResponse;
 };
 
+const updateSwapTrayCache = (client, data, fromIndex, toIndex) => {
+  let trays = data.allTrays;
+  // copy the data and modify the indexes
+  let trays_copy = JSON.parse(JSON.stringify(trays));
+
+  // get the dragged tray
+  let dragged_tray = trays_copy[fromIndex];
+  // remove the dragged tray
+  trays_copy.splice(fromIndex, 1);
+  // insert the removed tray into a new position
+  trays_copy.splice(toIndex, 0, dragged_tray);
+
+  client.writeQuery({
+    query: GET_TRAYS,
+    data: { allTrays: trays_copy }
+  });
+};
+
 // React component
 export const ListBoard = () => {
-  const { loading, error, data } = useQuery(GET_TRAYS);
   const [swapCards, ob] = useMutation(SWAP_CARD);
+  const { loading, error, data } = useQuery(GET_TRAYS);
   const [swapTrays, ob2] = useMutation(SWAP_TRAY);
-
   const client = useApolloClient();
 
   // function to execute at the end of a drag and drop action
   const onDragEnd = result => {
     const { destination, source, draggableId, type } = result;
-
-    console.log("type", type, source, draggableId, destination);
-
-    // read the trays from cache to construct an expected response
     const data = client.readQuery({
       query: GET_TRAYS
     });
 
     // if the action is on lists
     if (type == "list" && source.index != destination.index) {
-      console.log("uuuuuuuuuuuuuuuuuu", draggableId);
       swapTrays({
         variables: {
-          trayId: draggableId,
           fromIndex: source.index,
           toIndex: destination.index
         },
-        optimisticResponse: optimisticResponseTray(
+        update: updateSwapTrayCache(
+          client,
           data,
-          draggableId,
           source.index,
           destination.index
         )
@@ -221,7 +218,7 @@ export const ListBoard = () => {
           fromCardIndex: source.index,
           toCardIndex: destination.index
         },
-        optimisticResponse: optimisticResponse(data, source, destination)
+        optimisticResponse: optimisticResponseCard(data, source, destination)
       });
     }
   };
