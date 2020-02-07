@@ -14,12 +14,12 @@ import gql from "graphql-tag";
 // styled components
 // #########################################
 const ListContainer = styled.div`
-  background-color: #dfe3e6;
   border-radius: 3px;
   width: 300px;
   height: 100%;
   padding: 8px;
   margin-right: 8px;
+  background-color: ${props => (props.isDragging ? "blue" : "#dfe3e6")};
 `;
 
 const Board = styled.div`
@@ -45,12 +45,14 @@ const renderLists = (lists, onDragEnd) => {
                 index={index}
                 key={list.id}
               >
-                {provided => (
+                {(provided, snapshot) => (
                   <ListContainer
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                    // {...provided.dragHandleProps}
+                    isDragging={snapshot.isDragging}
                   >
+                    <h3 {...provided.dragHandleProps}>{list.title}</h3>
                     <Droppable droppableId={String(list.id)}>
                       {provided => (
                         <div
@@ -58,20 +60,23 @@ const renderLists = (lists, onDragEnd) => {
                           {...provided.droppableProps}
                           ref={provided.innerRef}
                         >
-                          <h3>{list.title}</h3>
                           {list.cards.map((card, index) => (
                             <Draggable
                               draggableId={String(card.id)}
                               index={index}
                               key={card.id}
                             >
-                              {provided => (
+                              {(provided, snapshot) => (
                                 <CardContainer
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <JtrayCard text={card.text} key={card.id} />
+                                  <JtrayCard
+                                    text={card.text}
+                                    key={card.id}
+                                    snapshot={snapshot}
+                                  />
                                 </CardContainer>
                               )}
                             </Draggable>

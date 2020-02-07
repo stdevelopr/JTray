@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import CardModal from "./CardModal.jsx";
 import styled from "styled-components";
 
-export const JtrayCard = ({ text }) => {
+export const JtrayCard = ({ text, snapshot }) => {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
@@ -19,7 +19,9 @@ export const JtrayCard = ({ text }) => {
   };
   return (
     <div>
-      <Card>
+      <Card
+        style={{ backgroundColor: snapshot.isDragging ? "yellow" : "white" }}
+      >
         <CardHeader
           avatar={<Avatar aria-label="recipe">R</Avatar>}
           action={<CardModal />}
