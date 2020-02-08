@@ -14,6 +14,35 @@ module.exports = {
         use: {
           loader: "babel-loader"
         }
+      },
+      {
+        // modular css
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: "style-loader" },
+          {
+            loader: "css-loader",
+            options: {
+              modules: true
+            }
+          },
+          { loader: "sass-loader" }
+        ],
+        include: /\.module\.scss$/
+      },
+      {
+        // global css
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: "style-loader" },
+          {
+            loader: "css-loader"
+          },
+          { loader: "sass-loader" }
+        ],
+        exclude: /\.module\.scss$/
       }
     ]
   },

@@ -5,23 +5,14 @@ import Avatar from "@material-ui/core/Avatar";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CardModal from "./CardModal.jsx";
-import styled from "styled-components";
+import styles from "./Card.module.scss";
 
 export const JtrayCard = ({ text, snapshot }) => {
   const [open, setOpen] = React.useState(false);
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
   return (
     <div>
-      <Card
-        style={{ backgroundColor: snapshot.isDragging ? "yellow" : "white" }}
-      >
+      <Card className={snapshot.isDragging ? styles.move : styles.static}>
         <CardHeader
           avatar={<Avatar aria-label="recipe">R</Avatar>}
           action={<CardModal />}

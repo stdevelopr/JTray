@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { JtrayCard } from "./Card.jsx";
-import styled from "styled-components";
 import { AddButton } from "./ActionButton.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useQuery } from "@apollo/react-hooks";
@@ -8,29 +7,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { GET_TRAYS } from "../graphql/queries.graphql";
 import { SWAP_CARD, SWAP_TRAY } from "../graphql/mutations.graphql";
 import { useApolloClient } from "@apollo/react-hooks";
-
-import gql from "graphql-tag";
-
-// styled components
-// #########################################
-const ListContainer = styled.div`
-  border-radius: 3px;
-  width: 300px;
-  height: 100%;
-  padding: 8px;
-  margin-right: 8px;
-  background-color: ${props => (props.isDragging ? "blue" : "#dfe3e6")};
-`;
-
-const Board = styled.div`
-  display: flex;
-  height: 100%;
-`;
-
-const CardContainer = styled.div`
-  margin-bottom: 8px;
-`;
-// #######################################
+import "./ListBoard.scss";
 
 // function to render the board based on array of trays
 const renderLists = (lists, onDragEnd) => {
@@ -38,7 +15,11 @@ const renderLists = (lists, onDragEnd) => {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-lists" type="list" direction="horizontal">
         {provided => (
-          <Board {...provided.droppableProps} ref={provided.innerRef}>
+          <div
+            className="board"
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
             {lists.map((list, index) => (
               <Draggable
                 draggableId={String(list.id)}
@@ -46,11 +27,10 @@ const renderLists = (lists, onDragEnd) => {
                 key={list.id}
               >
                 {(provided, snapshot) => (
-                  <ListContainer
+                  <div
+                    className={snapshot.isDragging ? "move" : "static"}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
-                    // {...provided.dragHandleProps}
-                    isDragging={snapshot.isDragging}
                   >
                     <h3 {...provided.dragHandleProps}>{list.title}</h3>
                     <Droppable droppableId={String(list.id)}>
@@ -67,7 +47,8 @@ const renderLists = (lists, onDragEnd) => {
                               key={card.id}
                             >
                               {(provided, snapshot) => (
-                                <CardContainer
+                                <div
+                                  className="card"
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
@@ -77,7 +58,7 @@ const renderLists = (lists, onDragEnd) => {
                                     key={card.id}
                                     snapshot={snapshot}
                                   />
-                                </CardContainer>
+                                </div>
                               )}
                             </Draggable>
                           ))}
@@ -86,13 +67,13 @@ const renderLists = (lists, onDragEnd) => {
                         </div>
                       )}
                     </Droppable>
-                  </ListContainer>
+                  </div>
                 )}
               </Draggable>
             ))}
             {provided.placeholder}
             <AddButton list />
-          </Board>
+          </div>
         )}
       </Droppable>
     </DragDropContext>

@@ -1,0 +1,12 @@
+@mixin cardColor($color) {
+  padding: initial;
+  background-color: $color !important;
+}
+
+.static {
+  @include cardColor(rgba(255, 255, 255, 0.822));
+}
+
+.move {
+  @include cardColor(rgb(130, 152, 199));
+}
