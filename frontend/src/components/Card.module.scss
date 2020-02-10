@@ -3,6 +3,16 @@
   background-color: $color !important;
 }
 
+.star{
+ cursor: pointer;
+ color: yellow;
+ font-size: 3em !important;
+ path {
+  stroke:black;
+  stroke-width: 1px;
+}
+}
+
 .static {
   @include cardColor(rgba(255, 255, 255, 0.822));
 }

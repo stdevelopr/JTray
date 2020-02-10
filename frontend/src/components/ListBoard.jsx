@@ -7,7 +7,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { GET_TRAYS } from "../graphql/queries.graphql";
 import { SWAP_CARD, SWAP_TRAY } from "../graphql/mutations.graphql";
 import { useApolloClient } from "@apollo/react-hooks";
-import "./ListBoard.scss";
+import styles from "./ListBoard.module.scss";
 
 // function to render the board based on array of trays
 const renderLists = (lists, onDragEnd) => {
@@ -16,7 +16,7 @@ const renderLists = (lists, onDragEnd) => {
       <Droppable droppableId="all-lists" type="list" direction="horizontal">
         {provided => (
           <div
-            className="board"
+            className={styles.board}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
@@ -28,11 +28,13 @@ const renderLists = (lists, onDragEnd) => {
               >
                 {(provided, snapshot) => (
                   <div
-                    className={snapshot.isDragging ? "move" : "static"}
+                    className={snapshot.isDragging ? styles.move : styles.static}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
+                    <div className={styles.listTitle}>
                     <h3 {...provided.dragHandleProps}>{list.title}</h3>
+                    </div>
                     <Droppable droppableId={String(list.id)}>
                       {provided => (
                         <div
@@ -48,7 +50,7 @@ const renderLists = (lists, onDragEnd) => {
                             >
                               {(provided, snapshot) => (
                                 <div
-                                  className="card"
+                                  className={styles.card}
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
