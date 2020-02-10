@@ -43,7 +43,13 @@ module.exports = {
           { loader: "sass-loader" }
         ],
         exclude: /\.module\.scss$/
-      }
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader',
+        ],
+      },
     ]
   },
   plugins: [

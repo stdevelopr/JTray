@@ -10,16 +10,17 @@ import styles from "./Card.module.scss";
 
 export const JtrayCard = ({ text, snapshot }) => {
   const [open, setOpen] = React.useState(false);
+  const [favorite, setFavorite] = React.useState(false);
+
   let admin = false
   return (
     <div>
       <Card className={snapshot.isDragging ? styles.move : styles.static}>
         <CardHeader
-          avatar={<Avatar aria-label="recipe">R</Avatar>}
-          action={admin ? <CardModal /> : <StarRateIcon className={styles.star} onClick={() => console.log('OKKKKKK')} />}
-          title="Shrimp and Chorizo Paella"
-          subheader="September 14, 2016"
+          avatar={<Avatar>R</Avatar>}
+          action={admin ? <CardModal /> : <div onClick={() => setFavorite(!favorite)} className={favorite ? styles.starfavorite : styles.star}></div>}
         />
+
         <CardContent>
           <Typography color="textSecondary" gutterBottom>
             {text}
