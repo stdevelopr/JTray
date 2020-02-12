@@ -13,9 +13,10 @@ app.add_url_rule("/graphql", view_func=GraphQLView.as_view(
     graphiql=True 
 ))
 
-# render route
-@app.route("/")
-def main():
+# render all routes
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def main(path):
     return render_template('index.html')
 
 
