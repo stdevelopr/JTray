@@ -5,6 +5,15 @@ version: "3"
 services:
   db:
     # build the service 'db' from the folder /backend/db where there is a Dockerfile
-    build: ./backend/db
+    build: ./Jtray/backend/db
     ports:
       - "27017:27017"
+  login:
+    build: ./login_microservice
+    ports:
+      - "3000:3000"
+    links:
+      - db_login
+
+  db_login:
+    build: ./login_microservice/db

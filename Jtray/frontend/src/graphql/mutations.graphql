@@ -1,0 +1,73 @@
+import gql from "graphql-tag";
+
+export const ADD_TRAY = gql`
+  mutation addTray($title: String!) {
+    addTray(title: $title) {
+      id
+      title
+      cards{
+        id
+      }
+    }
+  }
+`;
+
+export const ADD_CARD = gql`
+  mutation addCard($trayId: String!, $text: String!) {
+    addCard(trayId: $trayId, text: $text) {
+      id
+      title
+      cards {
+        id
+        text
+      }
+    }
+  }
+`;
+
+
+export const SWAP_TRAY = gql`
+  mutation swapTrayMutation(
+    $fromIndex: String!
+    $toIndex: String!
+  ) {
+    swapTray(
+      fromIndex: $fromIndex
+      toIndex: $toIndex
+    ) {
+      allTrays{
+      id
+      title
+      index
+      cards{
+        id
+        text
+      }
+      }
+    }
+  }
+`;
+
+export const SWAP_CARD = gql`
+  mutation swapCardMutation(
+    $fromTrayId: String!
+    $toTrayId: String!
+    $fromCardIndex: Int!
+    $toCardIndex: Int!
+  ) {
+    swapCard(
+      fromTrayId: $fromTrayId
+      toTrayId: $toTrayId
+      fromCardIndex: $fromCardIndex
+      toCardIndex: $toCardIndex
+    ) {
+      trays{
+      id
+      cards{
+        id
+        text
+      }
+      }
+    }
+  }
+`;
