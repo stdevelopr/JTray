@@ -1,20 +1,23 @@
-FROM node:10
+FROM python:3.7.1
 
-# Create app directory
-WORKDIR /usr/src/app
+LABEL Author="Richard"
+LABEL E-mail="stdevelopr@gmail.com"
+LABEL version="0.0.1"
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
+# ENV PYTHONDONTWRITEBYTECODE 1
+ENV FLASK_APP "backend/app.py"
+# ENV FLASK_ENV "development"
+# ENV FLASK_DEBUG True
 
-RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
+RUN mkdir /app
+WORKDIR /app
 
-# Bundle app source
-COPY . .
+COPY requirements.txt /app
 
-EXPOSE 3000
+RUN pip install -r requirements.txt
 
-CMD [ "npm", "start" ]
+ADD . /app
+
+EXPOSE 5000
+
+CMD flask run --host=0.0.0.0

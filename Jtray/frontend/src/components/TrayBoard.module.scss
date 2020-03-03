@@ -7,23 +7,23 @@
   background-color: $color;
 }
 
-h3{
+h3 {
   margin: 0px;
-  padding:15px;
-  :hover{
-    background-color: antiquewhite
+  padding: 15px;
+  :hover {
+    background-color: antiquewhite;
   }
 }
 
-.listTitle{
-  :hover{
-    background-color: rgb(233, 233, 178)
+.listTitle {
+  :hover {
+    background-color: rgb(233, 233, 178);
   }
 }
 .move {
   @include trayColor(rgb(233, 233, 178));
-  .listTitle{
-    background-color: rgb(233, 233, 178)
+  .listTitle {
+    background-color: rgb(233, 233, 178);
   }
 }
 
@@ -34,7 +34,7 @@ h3{
 .board {
   display: flex;
   height: 100%;
-  margin: 10px
+  margin: 10px;
 }
 
 .card {

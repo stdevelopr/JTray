@@ -1,19 +1,37 @@
 # whe are using version 3 of docker-compose
 version: "3"
 
-# services to be controlled
 services:
   db:
-    # build the service 'db' from the folder /backend/db where there is a Dockerfile
     build: ./Jtray/backend/db
     ports:
-      - "27017:27017"
-  login:
-    build: ./login_microservice
-    ports:
-      - "3000:3000"
-    links:
-      - db_login
+      - 27017:27017
 
-  db_login:
-    build: ./login_microservice/db
+  # jtray:
+  #   image: node:11
+  #   volumes:
+  #     - ./Jtray:/usr/src/app
+  #   working_dir: /usr/src/app
+  #   command: bash -c "npm install && npm run watch"
+  #   ports:
+  #     - 3500:3500
+
+  login_service:
+    image: node:11
+    volumes:
+      - ./login_microservice:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm run watch
+    ports:
+      - 3000:3000
+  # login:
+  #   build: ./login_microservice
+  #   ports:
+  #     - "3000:3000"
+  #   links:
+  #     - login_db
+  #   volumes:
+  #     - ./login_microservice:/usr/src/app
+  #   command: npm run watch
+  # login_db:
+  #   build: ./login_microservice/db

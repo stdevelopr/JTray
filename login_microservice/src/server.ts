@@ -22,10 +22,11 @@ app.post("/api/login", (req: Request, res: Response) => {
     id: 1,
     username: "dev",
     password: "dev",
+    admin: true,
     email: "stdevelopr@gmail.com"
   };
   if (users.username == user && users.password == password) {
-    jwt.sign({ user }, secretKey, (err: any, token: string) => {
+    jwt.sign(users, secretKey, (err: any, token: string) => {
       res.status(200).json({ token });
     });
   } else res.status(401).send({ error: "invalid user" });

@@ -11,12 +11,16 @@ db = client.Jtray
 class Card(graphene.ObjectType):
     _id = graphene.String(name='id')
     text = graphene.String()
+    adminUser = graphene.Boolean()
+    favoritedBy = graphene.List(graphene.Int)
 
 class Tray(graphene.ObjectType):
     _id = graphene.String(name='id')
     index = graphene.String()
     title = graphene.String()
     cards = graphene.List(Card)
+    createdByUserId = graphene.Int()
+    adminUser = graphene.Boolean()
 
 
 ####################################################
@@ -43,13 +47,15 @@ class AddTray(graphene.Mutation):
     """
     class Arguments:
         title = graphene.String()
+        userId = graphene.Int()
+        admin = graphene.Boolean()
     
     _id = graphene.String(name='id')
     index = graphene.String()
     title = graphene.String()
     cards = graphene.List(Card)
 
-    def mutate(self, info, title):
+    def mutate(self, info, title, userId, admin):
         # get the max index of the trays
         max_index = db["Trays"].find({}).sort([("index", -1)]).limit(1)
         # if there is no documents set the index to 0
@@ -59,7 +65,7 @@ class AddTray(graphene.Mutation):
         else:
             index = str(int(max_index[0]['index']) + 1)
         # write to db
-        new = db["Trays"].insert_one({"index": index,"title": title, "cards":[]})
+        new = db["Trays"].insert_one({"index": index, "createdByUserId": userId, "adminUser": admin, "title": title, "cards":[]})
 
         return Tray(_id= new.inserted_id, index=index, title = title, cards= [])
 
@@ -70,16 +76,28 @@ class AddCard(graphene.Mutation):
     class Arguments:
         trayId = graphene.String()
         text= graphene.String()
+        userId = graphene.Int()
+        admin = graphene.Boolean()
     
     _id = graphene.String(name='id')
     title = graphene.String()
     cards = graphene.List(Card)
 
-    def mutate(self, info, trayId, text):
+
+    def mutate(self, info, trayId, text, userId, admin):
         # generates an id for the new card
         cardId = ObjectId()
         # get the atualized tray after inserting the card
-        newTray = db.Trays.find_one_and_update({'_id': ObjectId(trayId)}, {"$push":{"cards":{"_id":cardId, "text":text}}}, 
+        newTray = db.Trays.find_one_and_update(
+            {'_id': ObjectId(trayId)}, 
+                {"$push":
+                    {"cards":
+                        {"_id":cardId, 
+                        "text":text, 
+                        "createdByUserId": userId, 
+                        "adminUser": admin,
+                        "favoritedBy":[]
+                    }}}, 
             return_document=ReturnDocument.AFTER, projection=['id', 'title', 'cards'])
 
         return Tray(**newTray)
@@ -167,12 +185,36 @@ class SwapCard(graphene.Mutation):
             
 
 
+class SetFavorite(graphene.Mutation):
+    """
+    Set a card as favorite. Return a list with the atualized tray cards
+    """
+    class Arguments:
+        trayId = graphene.String()
+        cardId = graphene.String()
+        userId = graphene.Int()
+        favoriteStatus = graphene.Boolean()
+    
+    cards = graphene.List(Card)
 
+    def mutate(self, info, trayId, cardId, userId, favoriteStatus):
+        query = {'_id':ObjectId(trayId) ,'cards._id': ObjectId(cardId)}
+
+        # add or remove the user from the favoritedBy array
+        if favoriteStatus:
+            update= {'$push': {'cards.$.favoritedBy':userId}}
+        else:
+            update= {'$pull': {'cards.$.favoritedBy':userId}}
+        newCards = db.Trays.find_one_and_update(query, update, 
+            return_document=ReturnDocument.AFTER, projection=['cards'])
+
+        return newCards
 
 class Mutation(graphene.ObjectType):
     addCard = AddCard.Field()
     addTray = AddTray.Field()
     swapCard = SwapCard.Field()
     swapTray = SwapTray.Field()
+    setCardFavorite = SetFavorite.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

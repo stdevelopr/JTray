@@ -7,7 +7,7 @@ import { useApolloClient } from "@apollo/react-hooks";
 // import { ButtonGroup } from "@material-ui/core";
 import { Card, Button } from "@material-ui/core";
 import TextareaAutosize from "react-textarea-autosize";
-import { GET_TRAYS } from "../graphql/queries.graphql";
+import { GET_TRAYS, GET_USER_INFO } from "../graphql/queries.graphql";
 import { ADD_CARD, ADD_TRAY } from "../graphql/mutations.graphql";
 import styled from "styled-components";
 
@@ -33,6 +33,9 @@ const ButtonGroup = styled.div`
 export const AddButton = ({ list, trayId }) => {
   const [openState, setOpenState] = useState(false);
   const [textAreaState, setTextAreaState] = useState("");
+  const {
+    data: { userId, admin }
+  } = useQuery(GET_USER_INFO);
   const [addTrayHook, {}] = useMutation(ADD_TRAY);
   const [addCardHook, {}] = useMutation(ADD_CARD);
 
@@ -68,17 +71,16 @@ export const AddButton = ({ list, trayId }) => {
 
   // add a new card and automatically update the cache by the id mapping
   const addCard = (trayId, textAreaState) => {
-    let retun = addCardHook({
-      variables: { trayId: trayId, text: textAreaState },
+    addCardHook({
+      variables: { trayId: trayId, text: textAreaState, userId, admin },
       update: resetForm
     });
-    console.log("kkklll", retun);
   };
 
   // add a new tray and update the cache through a custom function
   const addTray = () => {
     addTrayHook({
-      variables: { title: textAreaState },
+      variables: { title: textAreaState, userId, admin },
       update: updateTraysCache
     });
   };

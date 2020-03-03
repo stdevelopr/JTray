@@ -1,16 +1,16 @@
 import React from "react";
-import { JtrayCard } from "./Card.jsx";
+import { JCard } from "./JCard.jsx";
 import { AddButton } from "./ActionButton.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useQuery } from "@apollo/react-hooks";
 import { useMutation } from "@apollo/react-hooks";
-import { GET_TRAYS } from "../graphql/queries.graphql";
+import { GET_TRAYS, GET_USER_INFO } from "../graphql/queries.graphql";
 import { SWAP_CARD, SWAP_TRAY } from "../graphql/mutations.graphql";
 import { useApolloClient } from "@apollo/react-hooks";
 import styles from "./TrayBoard.module.scss";
 
 // function to render the board based on array of trays
-const renderTrays = (lists, onDragEnd) => {
+const renderTrays = (lists, onDragEnd, admin, userId) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-lists" type="list" direction="horizontal">
@@ -23,16 +23,19 @@ const renderTrays = (lists, onDragEnd) => {
             {lists.map((list, index) => (
               <Draggable
                 draggableId={String(list.id)}
+                isDragDisabled={!admin}
                 index={index}
                 key={list.id}
               >
                 {(provided, snapshot) => (
                   <div
-                    className={snapshot.isDragging ? styles.move : styles.static}
+                    className={
+                      snapshot.isDragging ? styles.move : styles.static
+                    }
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
-                    <div className={styles.listTitle}>
+                    <div className={admin ? styles.listTitle : null}>
                       <h3 {...provided.dragHandleProps}>{list.title}</h3>
                     </div>
                     <Droppable droppableId={String(list.id)}>
@@ -45,6 +48,7 @@ const renderTrays = (lists, onDragEnd) => {
                           {list.cards.map((card, index) => (
                             <Draggable
                               draggableId={String(card.id)}
+                              isDragDisabled={!admin}
                               index={index}
                               key={card.id}
                             >
@@ -55,10 +59,14 @@ const renderTrays = (lists, onDragEnd) => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <JtrayCard
+                                  <JCard
                                     text={card.text}
                                     key={card.id}
+                                    trayId={list.id}
+                                    cardId={card.id}
                                     snapshot={snapshot}
+                                    userId={userId}
+                                    favoritedBy={card.favoritedBy}
                                   />
                                 </div>
                               )}
@@ -170,6 +178,9 @@ const updateSwapTrayCache = (client, data, fromIndex, toIndex) => {
 // React component
 export const TrayBoard = () => {
   const [swapCards, ob] = useMutation(SWAP_CARD);
+  const {
+    data: { userId, admin }
+  } = useQuery(GET_USER_INFO);
   const { loading, error, data } = useQuery(GET_TRAYS);
   const [swapTrays, ob2] = useMutation(SWAP_TRAY);
   const client = useApolloClient();
@@ -213,5 +224,5 @@ export const TrayBoard = () => {
   if (loading) return "loading...";
   if (error) return "error :(";
 
-  return renderTrays(data["allTrays"], onDragEnd);
+  return renderTrays(data["allTrays"], onDragEnd, admin, userId);
 };

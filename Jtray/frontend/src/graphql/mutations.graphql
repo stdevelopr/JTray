@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const ADD_TRAY = gql`
-  mutation addTray($title: String!) {
-    addTray(title: $title) {
+  mutation addTray($title: String!, $userId: Int!, $admin: Boolean!) {
+    addTray(title: $title, userId: $userId, admin: $admin) {
       id
       title
       cards{
@@ -13,13 +13,15 @@ export const ADD_TRAY = gql`
 `;
 
 export const ADD_CARD = gql`
-  mutation addCard($trayId: String!, $text: String!) {
-    addCard(trayId: $trayId, text: $text) {
+  mutation addCard($trayId: String!, $text: String!, $userId: Int!, $admin: Boolean!) {
+    addCard(trayId: $trayId, text: $text, userId: $userId, admin: $admin) {
       id
       title
       cards {
         id
         text
+        adminUser
+        favoritedBy
       }
     }
   }
@@ -71,3 +73,19 @@ export const SWAP_CARD = gql`
     }
   }
 `;
+
+export const SET_CARD_FAVORITE = gql`
+mutation setCardFavorite (
+  $trayId: String!
+  $cardId: String!
+  $userId: Int!
+  $favoriteStatus: Boolean!
+){
+  setCardFavorite(cardId: $cardId, trayId: $trayId, userId: $userId, favoriteStatus: $favoriteStatus) {
+    cards {
+      id
+      favoritedBy
+    }
+  }
+}
+`

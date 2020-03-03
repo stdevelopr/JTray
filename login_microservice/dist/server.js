@@ -14,7 +14,7 @@ app.use(express_1.default.json());
 const secretKey = "secretkey";
 app.get("/api", (req, res) => {
   res.json({
-    message: "Welcome to auth API"
+    message: "Welcome to auth "
   });
 });
 app.post("/api/login", (req, res) => {
