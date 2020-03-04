@@ -23,17 +23,13 @@ export const JCard = ({
   const [setCardFavorite, { error: setFavoriteError }] = useMutation(
     SET_CARD_FAVORITE
   );
-  // console.log("ini", favorite);
-  console.log("eeerorr", setFavoriteError);
+
   const setFav = () => {
     const favoriteStatus = !favorite;
     setCardFavorite({
       variables: { trayId, cardId, userId, favoriteStatus },
       update: () => setFavorite(!favorite)
-
-      //
     });
-    // setFavorite(!favorite);
   };
   let admin = false;
   return (
@@ -48,7 +44,6 @@ export const JCard = ({
               <div
                 className={favorite ? styles.starfavorite : styles.star}
                 onClick={e => {
-                  // console.log(trayId, cardId);
                   setFav();
                 }}
               ></div>

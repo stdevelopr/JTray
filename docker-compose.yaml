@@ -24,14 +24,26 @@ services:
     command: npm run watch
     ports:
       - 3000:3000
+    links:
+      - login_db
   # login:
   #   build: ./login_microservice
   #   ports:
-  #     - "3000:3000"
+  #     - "3000:3000"  login_service:
+  # image: node:11
+  # volumes:
+  #   - ./login_microservice:/usr/src/app
+  # working_dir: /usr/src/app
+  # command: npm run watch
+  # ports:
+  #   - 3000:3000
   #   links:
   #     - login_db
   #   volumes:
   #     - ./login_microservice:/usr/src/app
   #   command: npm run watch
-  # login_db:
-  #   build: ./login_microservice/db
+
+  login_db:
+    build: ./login_microservice/db
+    ports:
+      - 27019:27017

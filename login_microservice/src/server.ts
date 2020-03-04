@@ -1,45 +1,32 @@
 import express, { Application, Request, Response, NextFunction } from "express";
-var cors = require("cors");
-const jwt = require("jsonwebtoken");
 
-const app: Application = express();
+const app = express();
+const bodyParser = require("body-parser");
+const routes = require("./routes.ts");
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+// middlewares
 app.use(cors());
-app.use(express.json());
-const secretKey: String = "secretkey";
+app.use(bodyParser.json());
+app.use("/api", routes);
+// app.use(express.json());
 
-app.get("/api", (req: Request, res: Response) => {
-  res.json({
-    message: "Welcome to auth API"
-  });
-});
+// Connection url
+const uri = "mongodb://login_db:27017/login";
 
-app.post("/api/login", (req: Request, res: Response) => {
-  const user = req.body.user;
-  const password = req.body.password;
-
-  // mock user
-  const users = {
-    id: 1,
-    username: "dev",
-    password: "dev",
-    admin: true,
-    email: "stdevelopr@gmail.com"
-  };
-  if (users.username == user && users.password == password) {
-    jwt.sign(users, secretKey, (err: any, token: string) => {
-      res.status(200).json({ token });
-    });
-  } else res.status(401).send({ error: "invalid user" });
-});
-
-app.post("/api/login/verify", (req: Request, res: Response) => {
-  const token: string = req.body.token;
-  try {
-    const decoded = jwt.verify(token, secretKey);
-    res.send(true);
-  } catch (err) {
-    res.send(false);
+// connect to db
+mongoose.connect(
+  uri,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  (err: any) => {
+    if (err) {
+      console.log(err.message);
+      console.log(err);
+    } else {
+      console.log("Connected to MongoDb");
+    }
   }
-});
+);
 
-app.listen(3000, () => console.log("server started on port 3000"));
+app.listen(3000, () => console.log("Starting Server on port 3000"));
