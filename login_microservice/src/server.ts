@@ -10,10 +10,11 @@ const cors = require("cors");
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/api", routes);
-// app.use(express.json());
 
-// Connection url
-const uri = "mongodb://login_db:27017/login";
+const dbName: String = "Login";
+
+// connection url
+const uri = "mongodb://login_db:27017/" + dbName;
 
 // connect to db
 mongoose.connect(

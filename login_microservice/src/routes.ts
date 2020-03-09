@@ -1,8 +1,10 @@
 import express, { Application, Request, Response, NextFunction } from "express";
-const User = require("./models.ts");
-const secretKey: String = "secretkey";
-const jwt = require("jsonwebtoken");
-import { builtinModules } from "module";
+import User, { IUser } from "./models";
+import * as bcryptjs from "bcryptjs";
+
+import * as jwt from "jsonwebtoken";
+
+const secretKey: jwt.Secret = "secretkey";
 
 const router = express.Router();
 
@@ -13,36 +15,60 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/register", async (req: Request, res: Response) => {
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password,
-    admin: req.body.admin
-  });
+  const username = req.body.username;
   try {
-    const savedUser = await user.save();
-    res.status(200).json(savedUser);
+    User.findOne({ username: username }, async function(err: any, user: IUser) {
+      if (!user) {
+        const hashedpass = await bcryptjs.hash(req.body.password, 10);
+        const user: IUser = new User({
+          username: req.body.username,
+          password: hashedpass,
+          admin: req.body.admin
+        });
+        try {
+          const savedUser = await user.save();
+          res.status(200).json(savedUser);
+        } catch (err) {
+          res.status(500).json(err);
+        }
+      } else {
+        console.log("user exists: ", username);
+        res.status(500).json("User already exists");
+      }
+    });
   } catch (err) {
+    console.log("Error: ", err);
     res.status(500).json(err);
   }
 });
 
-router.post("/login", (req: Request, res: Response) => {
-  const user = req.body.user;
-  const password = req.body.password;
-
-  // mock user
-  const users = {
-    id: 1,
-    username: "dev",
-    password: "dev",
-    admin: true,
-    email: "stdevelopr@gmail.com"
-  };
-  if (users.username == user && users.password == password) {
-    jwt.sign(users, secretKey, (err: any, token: string) => {
-      res.status(200).json({ token });
+router.post("/login", async (req: Request, res: Response) => {
+  try {
+    User.findOne({ username: req.body.username }, async function(
+      err: any,
+      user: IUser
+    ) {
+      if (user) {
+        if (await bcryptjs.compare(req.body.password, user.password)) {
+          const jwt_user = {
+            username: user.username,
+            admin: user.admin
+          };
+          jwt.sign(jwt_user, secretKey, (err: any, token: string) => {
+            res.status(200).json({ token });
+          });
+        } else {
+          res.status(401).send({ error: "invalid password!" });
+        }
+      } else {
+        console.log("Cannot find the user!", req.body.username);
+        res.status(500).json("Cannot find the user!");
+      }
     });
-  } else res.status(401).send({ error: "invalid user" });
+  } catch (err) {
+    console.log("Error: ", err);
+    res.status(500).send();
+  }
 });
 
 router.post("/login/verify", (req: Request, res: Response) => {

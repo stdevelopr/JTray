@@ -7,7 +7,6 @@ import jwt
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secretkey"
-app.config["LOGIN_REQUIRED"] = False
 
 
 # decorator to protect routes
@@ -37,11 +36,10 @@ graphql_view = GraphQLView.as_view(
     graphiql=True 
 )
 
-# conditional auth
-view_func = token_required(graphql_view) if app.config["LOGIN_REQUIRED"] else graphql_view
 
 # Endpoint to run queries
-app.add_url_rule("/graphql", view_func=view_func, methods=['GET','POST'])
+app.add_url_rule("/graphql", view_func=token_required(graphql_view), methods=['GET','POST'])
+
 
 # render all routes
 @app.route('/', defaults={'path': ''})
