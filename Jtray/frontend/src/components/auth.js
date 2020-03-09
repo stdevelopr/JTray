@@ -7,10 +7,13 @@ const token_name = "Jtoken";
 // verify if the user is valid,
 // and set the token in the local storage
 // Used in Login.jsx
-export async function authenticate(user, password) {
+export async function authenticate(username, password) {
   let auth = false;
   await axios
-    .post("http://localhost:3000/api/login", { user: user, password: password })
+    .post("http://localhost:3000/api/login", {
+      username: username,
+      password: password
+    })
     .then(res => {
       localStorage.setItem(token_name, res.data.token);
       auth = true;
@@ -41,4 +44,9 @@ export async function isAuthenticated() {
 // function used to get the token to send authenticated graphql requests. Used in App.jsx
 export const getToken = () => {
   return localStorage.getItem(token_name);
+};
+
+export const logOut = () => {
+  localStorage.removeItem(token_name);
+  location.reload();
 };

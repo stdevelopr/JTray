@@ -12,14 +12,14 @@ class Card(graphene.ObjectType):
     _id = graphene.String(name='id')
     text = graphene.String()
     adminUser = graphene.Boolean()
-    favoritedBy = graphene.List(graphene.Int)
+    favoritedBy = graphene.List(graphene.String)
 
 class Tray(graphene.ObjectType):
     _id = graphene.String(name='id')
     index = graphene.String()
     title = graphene.String()
     cards = graphene.List(Card)
-    createdByUserId = graphene.Int()
+    createdByUserId = graphene.String()
     adminUser = graphene.Boolean()
 
 
@@ -192,7 +192,7 @@ class SetFavorite(graphene.Mutation):
     class Arguments:
         trayId = graphene.String()
         cardId = graphene.String()
-        userId = graphene.Int()
+        userId = graphene.String()
         favoriteStatus = graphene.Boolean()
     
     cards = graphene.List(Card)

@@ -51,6 +51,7 @@ router.post("/login", async (req: Request, res: Response) => {
       if (user) {
         if (await bcryptjs.compare(req.body.password, user.password)) {
           const jwt_user = {
+            userId: user._id,
             username: user.username,
             admin: user.admin
           };

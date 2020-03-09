@@ -16,7 +16,8 @@ export const JCard = ({
   trayId,
   cardId,
   favoritedBy,
-  userId
+  userId,
+  admin
 }) => {
   const [open, setOpen] = React.useState(false);
   const [favorite, setFavorite] = React.useState(favoritedBy.includes(userId));
@@ -31,12 +32,12 @@ export const JCard = ({
       update: () => setFavorite(!favorite)
     });
   };
-  let admin = false;
+  const countFavorite = favoritedBy.length;
   return (
     <div>
       <Card className={snapshot.isDragging ? styles.move : styles.static}>
         <CardHeader
-          avatar={<Avatar>R</Avatar>}
+          avatar={<Avatar>{admin ? countFavorite : "R"}</Avatar>}
           action={
             admin ? (
               <CardModal />

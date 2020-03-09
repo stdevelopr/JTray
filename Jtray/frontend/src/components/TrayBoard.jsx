@@ -66,6 +66,7 @@ const renderTrays = (lists, onDragEnd, admin, userId) => {
                                     cardId={card.id}
                                     snapshot={snapshot}
                                     userId={userId}
+                                    admin={admin}
                                     favoritedBy={card.favoritedBy}
                                   />
                                 </div>
@@ -222,7 +223,10 @@ export const TrayBoard = () => {
     }
   };
   if (loading) return "loading...";
-  if (error) return "error :(";
+  if (error) {
+    console.log(error);
+    return "error :(";
+  }
 
   return renderTrays(data["allTrays"], onDragEnd, admin, userId);
 };

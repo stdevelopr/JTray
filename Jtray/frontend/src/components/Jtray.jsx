@@ -12,14 +12,14 @@ const Jtray = ({ client }) => {
   const decoded = jwt_decode(token);
   client.writeData({
     data: {
-      userId: decoded.id,
+      userId: decoded.userId,
       admin: decoded.admin
     }
   });
   return (
     <div>
       <Header />
-      <BoardHeader />
+      {/* <BoardHeader /> */}
       <TrayBoard />
     </div>
   );
