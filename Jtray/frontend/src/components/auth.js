@@ -41,6 +41,26 @@ export async function isAuthenticated() {
   return auth;
 }
 
+// Register a new user
+export async function register(username, password) {
+  let success = false;
+  if (username == "" || password == "") throw "empty fields";
+  await axios
+    .post("http://localhost:3000/api/register", {
+      username: username,
+      password: password,
+      admin: false
+    })
+    .then(res => {
+      if (res.data) {
+        success = true;
+      } else {
+        success = false;
+      }
+    });
+  return success;
+}
+
 // function used to get the token to send authenticated graphql requests. Used in App.jsx
 export const getToken = () => {
   return localStorage.getItem(token_name);

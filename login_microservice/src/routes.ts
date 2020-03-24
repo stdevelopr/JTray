@@ -3,6 +3,7 @@ import User, { IUser } from "./models";
 import * as bcryptjs from "bcryptjs";
 
 import * as jwt from "jsonwebtoken";
+import { stringify } from "querystring";
 
 const secretKey: jwt.Secret = "secretkey";
 
@@ -15,15 +16,17 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.post("/register", async (req: Request, res: Response) => {
-  const username = req.body.username;
+  const username: string = req.body.username;
+  const password: string = req.body.password;
+  const admin: boolean = req.body.admin;
   try {
     User.findOne({ username: username }, async function(err: any, user: IUser) {
       if (!user) {
-        const hashedpass = await bcryptjs.hash(req.body.password, 10);
+        const hashedpass = await bcryptjs.hash(password, 10);
         const user: IUser = new User({
-          username: req.body.username,
+          username: username,
           password: hashedpass,
-          admin: req.body.admin
+          admin: admin
         });
         try {
           const savedUser = await user.save();

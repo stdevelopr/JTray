@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { InMemoryCache } from "apollo-cache-inmemory";
-import Login from "./Login.jsx";
-import Jtray from "./Jtray.jsx";
+import Auth from "./Auth.jsx";
+// import Jtray from "./Jtray.jsx";
+import EnterScreen from "./EnterScreen.jsx";
 import styles from "./App.module.scss";
 import { getToken } from "./auth";
 
@@ -22,6 +23,8 @@ const cache = new InMemoryCache({
     }
   }
 });
+
+console.log("TTTTTTTTTTTTTTTTTTTT");
 
 // set the connection with the graphql server
 const client = new ApolloClient({
@@ -41,16 +44,18 @@ const client = new ApolloClient({
 });
 
 const App = () => {
+  const token = getToken();
+  console.log("tookkkk", token);
   return (
     <div className={styles.app}>
       <div className={styles.board}>
         <ApolloProvider client={client}>
           <Router>
             <Route exact path="/">
-              {getToken() != "undefined" && getToken() != null ? (
-                <Jtray />
+              {token != "undefined" && token != null ? (
+                <EnterScreen token={token} />
               ) : (
-                <Login />
+                <Auth />
               )}
             </Route>
           </Router>
