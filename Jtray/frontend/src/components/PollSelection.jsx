@@ -1,8 +1,19 @@
 import React, { useState } from "react";
+import { useMutation } from "@apollo/react-hooks";
+import { ADD_POLL } from "../graphql/mutations.graphql";
 
 export default function PollSelection({ user_info }) {
   const [register, setRegister] = useState("");
   const [select, setSelect] = useState("");
+  const [addPollHook, {}] = useMutation(ADD_POLL);
+
+  // add a new tray and update the cache through a custom function
+  const addPoll = () => {
+    addPollHook({
+      variables: { title: register, createdByUserId: user_info.userId }
+      // update: updateTraysCache
+    });
+  };
   return (
     <div>
       Register a new Poll or select a existing one:
@@ -12,6 +23,7 @@ export default function PollSelection({ user_info }) {
         onSubmit={e => {
           e.preventDefault();
           console.log("register");
+          addPoll();
         }}
       >
         <input

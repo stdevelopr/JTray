@@ -1,5 +1,16 @@
 import gql from "graphql-tag";
 
+export const ADD_POLL = gql`
+mutation addPoll($title: String!, $createdByUserId: String!){
+  __typename
+  addPoll(title: $title, createdByUserId: $createdByUserId) {
+    id
+    title
+    createdByUserId
+  }
+}
+`;
+
 export const ADD_TRAY = gql`
   mutation addTray($title: String!, $userId: String!, $admin: Boolean!) {
     addTray(title: $title, userId: $userId, admin: $admin) {

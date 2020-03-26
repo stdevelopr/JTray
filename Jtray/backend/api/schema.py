@@ -22,6 +22,11 @@ class Tray(graphene.ObjectType):
     createdByUserId = graphene.String()
     adminUser = graphene.Boolean()
 
+class Poll(graphene.ObjectType):
+    _id = graphene.String(name='id')
+    title = graphene.String()
+    createdByUserId = graphene.String()
+
 
 ####################################################
 # Queries
@@ -41,9 +46,28 @@ class Query(graphene.ObjectType):
 ####################################################
 # MUTATIONS
 #################################################
+class AddPoll(graphene.Mutation):
+    """
+    Create and return a new empty poll: Poll(id, title, createdByUserId)
+    """
+    class Arguments:
+        title = graphene.String()
+        createdByUserId = graphene.String()
+    
+    _id = graphene.String(name='id')
+    createdByUserId = graphene.String()
+    title = graphene.String()
+
+    def mutate(self, info, title, createdByUserId):
+
+        new = db["Polls"].insert_one({"title": title, "createdByUserId": createdByUserId})
+
+        return Poll(_id = new.inserted_id, title = title, createdByUserId = createdByUserId)
+
+
 class AddTray(graphene.Mutation):
     """
-    Returns a new empty tray: Tray(id, title, cards:[])
+    Create and return a new empty tray: Tray(id, title, cards:[])
     """
     class Arguments:
         title = graphene.String()
@@ -71,7 +95,7 @@ class AddTray(graphene.Mutation):
 
 class AddCard(graphene.Mutation):
     """
-    Returns the atualized tray: Tray(id, title, cards)
+    Add and return the atualized tray: Tray(id, title, cards)
     """
     class Arguments:
         trayId = graphene.String()
@@ -216,5 +240,6 @@ class Mutation(graphene.ObjectType):
     swapCard = SwapCard.Field()
     swapTray = SwapTray.Field()
     setCardFavorite = SetFavorite.Field()
+    addPoll  =AddPoll.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
