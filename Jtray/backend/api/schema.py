@@ -27,6 +27,10 @@ class Poll(graphene.ObjectType):
     title = graphene.String()
     createdByUserId = graphene.String()
 
+class User(graphene.ObjectType):
+    _id = graphene.String(name='id')
+    polls = graphene.List(Poll)
+
 
 ####################################################
 # Queries
@@ -34,6 +38,7 @@ class Poll(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     allTrays = graphene.List(Tray)
+    getUser = graphene.Field(User, userId = graphene.String())
 
     def resolve_allTrays(self, info):
         trays = db.Trays.find({}).sort("index",1)
@@ -41,6 +46,16 @@ class Query(graphene.ObjectType):
         for tray in trays:
             trays_list.append(tray)
         return trays_list
+
+    def resolve_getUser(self, info, userId):
+        user = db.Users.find({"userId":userId})
+        polls = db.Polls.find({"createdByUserId": userId})
+        if user.count() == 0:
+            new = db.Users.insert_one({"userId": userId, "polls":[]})
+            return User(_id=new.inserted_id, polls=[])
+
+        return User(_id= userId, polls=list(polls))
+
 
 
 ####################################################

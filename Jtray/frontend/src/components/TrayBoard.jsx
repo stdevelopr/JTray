@@ -183,6 +183,7 @@ export const TrayBoard = () => {
     data: { userId, admin }
   } = useQuery(GET_USER_INFO);
   const { loading, error, data } = useQuery(GET_TRAYS);
+  console.log("trayss", data);
   const [swapTrays, ob2] = useMutation(SWAP_TRAY);
   const client = useApolloClient();
 

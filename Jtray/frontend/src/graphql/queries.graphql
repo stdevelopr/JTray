@@ -21,3 +21,14 @@ export const GET_TRAYS = gql `
     admin @client
   }
   `
+
+  export const GET_JTRAY_USER = gql `
+  query getUser($userId: String!) {
+  getUser(userId: $userId) {
+    polls {
+      title
+    }
+    id
+  }
+}
+  `
