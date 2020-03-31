@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { authenticate, isAuthenticated, register } from "./auth";
-import PollSelection from "./PollSelection.jsx";
-import Jtray from "./Jtray.jsx";
-import { withApollo } from "@apollo/react-hoc";
 
-function Auth({ client }) {
+/**
+ *  Component to render if the user is not logged in
+ */
+function Auth() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [mainPoll, setMainPoll] = useState(null);
-  const [authorized, setAuthorized] = useState(false);
+
+  // at first supposes the user is  already regitered and renders the login component
   const [registered, setRegistered] = useState(true);
 
-  useEffect(() => {
-    isAuthenticated().then(auth => {
-      setAuthorized(auth);
-    });
-  }, []);
-
+  // renders the login component, and verifies if the user is authorized
   const renderLogIn = () => {
     return (
       <div>
@@ -26,7 +21,7 @@ function Auth({ client }) {
             e.preventDefault();
             authenticate(user, password).then(auth => {
               if (auth) {
-                setAuthorized(true);
+                window.location.reload();
               }
             });
           }}
@@ -43,11 +38,20 @@ function Auth({ client }) {
           />
           <button type="submit">submit</button>
         </form>
-        <button onClick={() => setRegistered(false)}>Register</button>
+        <button
+          onClick={() => {
+            setRegistered(false);
+            setUser("");
+            setPassword("");
+          }}
+        >
+          Register
+        </button>
       </div>
     );
   };
 
+  // renders a register component if the user is not registered yet.
   const renderRegister = () => {
     return (
       <div>
@@ -56,6 +60,9 @@ function Auth({ client }) {
           onSubmit={e => {
             e.preventDefault();
             register(user, password).then(res => console.log(res));
+            setRegistered(true);
+            setUser("");
+            setPassword("");
           }}
         >
           <div>
@@ -80,12 +87,10 @@ function Auth({ client }) {
     );
   };
 
-  const first_screen = mainPoll ? <Jtray /> : <PollSelection />;
+  // if the user is not logged in renders the login or the register component
   const login_register = registered ? renderLogIn() : renderRegister();
 
-  const auth_redir = authorized ? first_screen : login_register;
-
-  return auth_redir;
+  return login_register;
 }
 
-export default withApollo(Auth);
+export default Auth;

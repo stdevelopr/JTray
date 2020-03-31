@@ -13,16 +13,16 @@ const PollSelection = ({ client, user_info }) => {
   // add a new tray and update the cache through a custom function
   const addPoll = () => {
     addPollHook({
-      variables: { title: register, createdByUserId: user_info.userId },
-      onCompleted: client.writeData({
-        data: {
-          mainPoll: register
-        }
-      })
+      variables: { title: register, createdByUserId: user_info.userId }
+      // onCompleted: client.writeData({
+      //   data: {
+      //     mainPoll: register
+      //   }
+      // })
     });
   };
 
-  const pollSelection = () => {
+  const render_select = () => {
     return (
       <div>
         Register a new Poll or select a existing one:
@@ -50,7 +50,7 @@ const PollSelection = ({ client, user_info }) => {
       </div>
     );
   };
-  return pollSelection();
+  return render_select();
 };
 
 export default withApollo(PollSelection);

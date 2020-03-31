@@ -1,4 +1,5 @@
 import React from "react";
+import { getToken } from "./auth";
 import jwt_decode from "jwt-decode";
 import { withApollo } from "@apollo/react-hoc";
 import { useQuery } from "@apollo/react-hooks";
@@ -6,22 +7,27 @@ import PollSelection from "./PollSelection.jsx";
 import Jtray from "./Jtray.jsx";
 import { GET_JTRAY_USER } from "../graphql/queries.graphql";
 
+/**
+ * Component to render if the user has sucessfuly authenticated.
+ * If the user has already a poll, loads it.
+ * else create/select one.
+ */
 const EnterScreen = ({ client, token }) => {
-  // verify if the user is authenticated by the login microsrvice
+  // get the user info from the token
   const user_info = jwt_decode(token);
 
-  // verify if the user has already been registered in Jtray and create a new one, if not.
+  // verifies if the user has already been registered in Jtray and if not, creates a new user entry in the Users collection.
   const { data, loading } = useQuery(GET_JTRAY_USER, {
     variables: { userId: user_info.userId }
   });
   if (loading) return "LOADING....";
-  console.log("daaaaaaaaaaaa", data);
+  console.log("token_info", user_info);
+  console.log("user data:", data);
   const mainPoll = data.getUser.polls;
-  console.log("user_info", user_info);
 
   const firstScreen =
     data.getUser.polls.length != 0 ? (
-      <Jtray />
+      <Jtray user={data.getUser} />
     ) : (
       <PollSelection user_info={user_info} />
     );
