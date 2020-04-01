@@ -1,5 +1,13 @@
 import gql from "graphql-tag";
   
+export const GET_POLLS = gql `
+query MyQuery {
+  allPolls {
+    title
+    id
+  }
+}
+`
 export const GET_TRAYS = gql `
   query Trays {
     allTrays {

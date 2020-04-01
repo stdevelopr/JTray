@@ -39,6 +39,11 @@ class User(graphene.ObjectType):
 class Query(graphene.ObjectType):
     allTrays = graphene.List(Tray)
     getUser = graphene.Field(User, userId = graphene.String())
+    allPolls = graphene.List(Poll)
+
+    def resolve_allPolls(self, info):
+        polls = db.Polls.find({})
+        return [poll for poll in polls]
 
     def resolve_allTrays(self, info):
         trays = db.Trays.find({}).sort("index",1)

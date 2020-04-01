@@ -24,10 +24,11 @@ const EnterScreen = ({ client, token }) => {
   console.log("token_info", user_info);
   console.log("user data:", data);
   const mainPoll = data.getUser.polls;
+  console.log(data.getUser.polls);
 
   const firstScreen =
     data.getUser.polls.length != 0 ? (
-      <Jtray user={data.getUser} />
+      <Jtray userInfo={user_info} poll={data.getUser.polls} />
     ) : (
       <PollSelection user_info={user_info} />
     );
