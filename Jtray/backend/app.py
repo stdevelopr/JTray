@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from flask_graphql import GraphQLView
-from api.schema import schema
 from functools import wraps
 import jwt
-
+from api.schema import schema
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secretkey"

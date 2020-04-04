@@ -12,8 +12,8 @@ mutation addPoll($title: String!, $createdByUserId: String!){
 `;
 
 export const ADD_TRAY = gql`
-  mutation addTray($title: String!, $userId: String!, $admin: Boolean!) {
-    addTray(title: $title, userId: $userId, admin: $admin) {
+  mutation addTray($title: String!, $pollId: String!, $userId: String!, $admin: Boolean!) {
+    addTray(title: $title, pollId: $pollId, userId: $userId, admin: $admin) {
       id
       title
       cards{

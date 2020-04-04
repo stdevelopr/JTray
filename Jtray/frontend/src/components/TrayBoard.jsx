@@ -10,7 +10,7 @@ import { useApolloClient } from "@apollo/react-hooks";
 import styles from "./TrayBoard.module.scss";
 
 // function to render the board based on array of trays
-const renderTrays = (lists, onDragEnd, admin, userId) => {
+const renderTrays = (lists, onDragEnd, admin, userId, pollId) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-lists" type="list" direction="horizontal">
@@ -74,7 +74,11 @@ const renderTrays = (lists, onDragEnd, admin, userId) => {
                             </Draggable>
                           ))}
                           {provided.placeholder}
-                          <AddButton trayId={list.id} />
+                          <AddButton
+                            trayId={list.id}
+                            userId={userId}
+                            admin={admin}
+                          />
                         </div>
                       )}
                     </Droppable>
@@ -83,7 +87,7 @@ const renderTrays = (lists, onDragEnd, admin, userId) => {
               </Draggable>
             ))}
             {provided.placeholder}
-            <AddButton list />
+            <AddButton pollId={pollId} userId={userId} admin={admin} list />
           </div>
         )}
       </Droppable>
@@ -172,17 +176,19 @@ const updateSwapTrayCache = (client, data, fromIndex, toIndex) => {
 
   client.writeQuery({
     query: GET_TRAYS,
-    data: { allTrays: trays_copy }
+    data: { Trays: trays_copy }
   });
 };
 
 // React component
-export const TrayBoard = () => {
+export const TrayBoard = ({ pollId, userId, admin }) => {
   const [swapCards, ob] = useMutation(SWAP_CARD);
-  const {
-    data: { userId, admin }
-  } = useQuery(GET_USER_INFO);
-  const { loading, error, data } = useQuery(GET_TRAYS);
+  // const {
+  //   data: { userId, admin }
+  // } = useQuery(GET_USER_INFO);
+  const { loading, error, data } = useQuery(GET_TRAYS, {
+    variables: { pollId: pollId }
+  });
   console.log("trayss", data);
   const [swapTrays, ob2] = useMutation(SWAP_TRAY);
   const client = useApolloClient();
@@ -229,5 +235,5 @@ export const TrayBoard = () => {
     return "error :(";
   }
 
-  return renderTrays(data["allTrays"], onDragEnd, admin, userId);
+  return renderTrays(data["pollTrays"], onDragEnd, admin, userId, pollId);
 };

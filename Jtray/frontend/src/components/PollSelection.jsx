@@ -40,8 +40,10 @@ const PollSelection = ({ client, user_info }) => {
         <br />
         <form
           onSubmit={e => {
-            console.log("register");
+            e.preventDefault();
+            // console.log("register");
             addPoll();
+            // window.location.reload()
           }}
         >
           <input

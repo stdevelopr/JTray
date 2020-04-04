@@ -30,12 +30,12 @@ const ButtonGroup = styled.div`
 `;
 // #####################################################
 
-export const AddButton = ({ list, trayId }) => {
+export const AddButton = ({ list, trayId, pollId, userId, admin }) => {
   const [openState, setOpenState] = useState(false);
   const [textAreaState, setTextAreaState] = useState("");
-  const {
-    data: { userId, admin }
-  } = useQuery(GET_USER_INFO);
+  // const {
+  //   data: { userId, admin }
+  // } = useQuery(GET_USER_INFO);
   const [addTrayHook, {}] = useMutation(ADD_TRAY);
   const [addCardHook, {}] = useMutation(ADD_CARD);
 
@@ -54,16 +54,25 @@ export const AddButton = ({ list, trayId }) => {
 
   // function to get all the trays from cache and add a new one
   const updateTraysCache = (client, { data: { addTray } }) => {
+    console.log("POOOLLLL", pollId);
     const data = client.readQuery({
-      query: GET_TRAYS
+      query: GET_TRAYS,
+      variables: { pollId: pollId }
     });
+
+    console.log("DATACACHE", data);
+
+    console.log("ADDTRAY", addTray);
 
     let data_copy = JSON.parse(JSON.stringify(data));
 
-    data_copy.allTrays.push(addTray);
+    data_copy.pollTrays.push(addTray);
+
+    console.log("DATACOPY", data_copy);
 
     client.writeQuery({
       query: GET_TRAYS,
+      variables: { pollId: pollId },
       data: data_copy
     });
     resetForm();
@@ -78,9 +87,10 @@ export const AddButton = ({ list, trayId }) => {
   };
 
   // add a new tray and update the cache through a custom function
-  const addTray = () => {
+  const addTray = pollId => {
+    console.log("adding to ", pollId);
     addTrayHook({
-      variables: { title: textAreaState, userId, admin },
+      variables: { title: textAreaState, pollId: pollId, userId, admin },
       update: updateTraysCache
     });
   };
@@ -131,7 +141,7 @@ export const AddButton = ({ list, trayId }) => {
           style={{ color: "white", backgroundColor: "#5aac44" }}
           onMouseDown={e => {
             e.preventDefault();
-            list ? addTray() : addCard(trayId, textAreaState);
+            list ? addTray(pollId) : addCard(trayId, textAreaState);
           }}
         >
           Add

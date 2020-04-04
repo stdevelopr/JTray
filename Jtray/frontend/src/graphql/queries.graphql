@@ -9,8 +9,8 @@ query MyQuery {
 }
 `
 export const GET_TRAYS = gql `
-  query Trays {
-    allTrays {
+  query pollTrays($pollId: String!) {
+    pollTrays(pollId: $pollId) {
       id
       title
       cards {
@@ -22,7 +22,6 @@ export const GET_TRAYS = gql `
     }
   }
   `
-
   export const GET_USER_INFO = gql `
   query USER {
     userId @client

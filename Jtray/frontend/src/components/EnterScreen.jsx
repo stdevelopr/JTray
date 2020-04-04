@@ -12,6 +12,7 @@ import { GET_JTRAY_USER } from "../graphql/queries.graphql";
  * If the user has already a poll, loads it.
  * else create/select one.
  */
+// TODO: SELECT DIFFERENT POLLS AND MANAGE ADMINS
 const EnterScreen = ({ client, token }) => {
   // get the user info from the token
   const user_info = jwt_decode(token);
@@ -24,11 +25,10 @@ const EnterScreen = ({ client, token }) => {
   console.log("token_info", user_info);
   console.log("user data:", data);
   const mainPoll = data.getUser.polls;
-  console.log(data.getUser.polls);
 
   const firstScreen =
     data.getUser.polls.length != 0 ? (
-      <Jtray userInfo={user_info} poll={data.getUser.polls} />
+      <Jtray userInfo={user_info} poll={data.getUser.polls[0]} />
     ) : (
       <PollSelection user_info={user_info} />
     );

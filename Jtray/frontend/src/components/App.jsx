@@ -9,7 +9,7 @@ import styles from "./App.module.scss";
 import { getToken } from "./auth";
 
 const cache = new InMemoryCache({
-  // map objects with the same id to atualize the cache after mutations
+  // map objects ids to atualize the cache after mutations
   dataIdFromObject: object => {
     switch (object.__typename) {
       case "Tray":

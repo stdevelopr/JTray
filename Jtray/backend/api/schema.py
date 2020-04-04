@@ -1,6 +1,11 @@
+""" This module contains the GRAPHQL schema that maps requests to a mongoDB database.
+"""
+
+# __version__ = '0.1'
+
 import graphene
-from pymongo import MongoClient, ReturnDocument
 from bson.objectid import ObjectId
+from pymongo import MongoClient, ReturnDocument
 
 client = MongoClient("mongodb://localhost:27017")
 db = client.Jtray
@@ -16,6 +21,7 @@ class Card(graphene.ObjectType):
 
 class Tray(graphene.ObjectType):
     _id = graphene.String(name='id')
+    pollId = graphene.String()
     index = graphene.String()
     title = graphene.String()
     cards = graphene.List(Card)
@@ -37,7 +43,7 @@ class User(graphene.ObjectType):
 ###################################################
 
 class Query(graphene.ObjectType):
-    allTrays = graphene.List(Tray)
+    pollTrays = graphene.List(Tray, pollId= graphene.String())
     getUser = graphene.Field(User, userId = graphene.String())
     allPolls = graphene.List(Poll)
 
@@ -45,8 +51,8 @@ class Query(graphene.ObjectType):
         polls = db.Polls.find({})
         return [poll for poll in polls]
 
-    def resolve_allTrays(self, info):
-        trays = db.Trays.find({}).sort("index",1)
+    def resolve_pollTrays(self, info, pollId):
+        trays = db.Trays.find({"pollId": pollId}).sort("index",1)
         trays_list = []
         for tray in trays:
             trays_list.append(tray)
@@ -91,27 +97,27 @@ class AddTray(graphene.Mutation):
     """
     class Arguments:
         title = graphene.String()
-        userId = graphene.Int()
+        userId = graphene.String()
         admin = graphene.Boolean()
+        pollId = graphene.String()
     
     _id = graphene.String(name='id')
     index = graphene.String()
     title = graphene.String()
+    pollId = graphene.String()
     cards = graphene.List(Card)
 
-    def mutate(self, info, title, userId, admin):
+    def mutate(self, info, title, pollId, userId, admin):
         # get the max index of the trays
         max_index = db["Trays"].find({}).sort([("index", -1)]).limit(1)
-        # if there is no documents set the index to 0
-        if max_index.count() == 0:
-            index = "0"
-            # else get the max value and increment one
-        else:
-            index = str(int(max_index[0]['index']) + 1)
-        # write to db
-        new = db["Trays"].insert_one({"index": index, "createdByUserId": userId, "adminUser": admin, "title": title, "cards":[]})
 
-        return Tray(_id= new.inserted_id, index=index, title = title, cards= [])
+        # calculates the index of the new tray
+        index = "0" if  max_index.count() == 0 else str(int(max_index[0]['index']) + 1)
+
+        new = db["Trays"].insert_one({"index": index, "pollId": pollId, "createdByUserId": userId, 
+        "adminUser": admin, "title": title, "cards":[]})
+
+        return Tray(_id= new.inserted_id, pollId= pollId, index=index, title = title, cards= [])
 
 class AddCard(graphene.Mutation):
     """
@@ -120,7 +126,7 @@ class AddCard(graphene.Mutation):
     class Arguments:
         trayId = graphene.String()
         text= graphene.String()
-        userId = graphene.Int()
+        userId = graphene.String()
         admin = graphene.Boolean()
     
     _id = graphene.String(name='id')
