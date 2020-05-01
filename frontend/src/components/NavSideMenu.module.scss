@@ -1,0 +1,115 @@
+.navbar {
+  position: relative;
+  overflow: hidden;
+  background-color: darkturquoise;
+  // background-image: linear-gradient(blue, white);
+  height: 60px;
+  a {
+    position: absolute;
+    z-index: 10;
+    padding: 14px 16px;
+  }
+}
+
+.myPollsText {
+  position: absolute;
+  top: 0px;
+  color: white;
+  display: inline-block;
+}
+
+.parentHeight {
+  position: relative;
+  background-color: lightgreen;
+}
+
+.sidenav {
+  overflow: scroll;
+  position: absolute;
+  min-height: calc(100vh - 120px);
+  height: 100%;
+  background-color: darkturquoise;
+  transition: 0.5s;
+  a {
+    display: block;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+    &:first-child {
+      display: block;
+      float: none;
+      text-align: right;
+      font-size: 30px;
+      padding: 10px;
+      padding-top: 0px;
+      size: 10px;
+    }
+  }
+}
+
+.sideMenuItem {
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+.itemPollDelete {
+  color: red;
+  border: solid;
+  margin-top: -5px;
+  background-color: whitesmoke;
+}
+
+.verticalIcon {
+  position: absolute !important;
+  right: 5px !important;
+  padding: 0px !important;
+}
+
+.verticalIconContainer {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.selected {
+  background-color: yellow;
+  color: black;
+}
+
+.side_close {
+  width: 0px;
+}
+
+.side_open {
+  width: 200px;
+}
+
+.content {
+  display: inline-block;
+  // background-color: lightseagreen;
+  // margin-left: 10px;
+  // padding-left: 20px;
+  transition: 0.5s;
+}
+
+.content_open {
+  margin-left: 200px;
+}
+
+.logo {
+  position: absolute;
+  text-align: center;
+  width: 100vw;
+  color: white;
+  text-align: center;
+}
+
+.title {
+  color: seashell;
+  // position: absolute;
+  // width: 100vw;
+  // text-align: center;
+  font-size: larger;
+}

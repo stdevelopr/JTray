@@ -1,0 +1,130 @@
+.publicSelection {
+  position: absolute;
+  z-index: 2;
+  height: 100vh;
+  width: 100vw;
+  background-color: blue;
+}
+
+.pollsParent {
+  position: relative;
+  display: flex;
+  flex-flow: row wrap;
+  background-color: darkturquoise;
+  animation-name: openPublicSelection;
+  animation-duration: 0.5s;
+  overflow: hidden;
+}
+
+.pollContent {
+  width: 200px;
+  text-align: center;
+  height: fit-content;
+  margin: 30px;
+  background-color: lightgreen;
+}
+
+.contentWrapper {
+  position: absolute;
+  width: inherit;
+  height: inherit;
+}
+
+.listItemTitle {
+  text-align: center;
+  color: white;
+  font-weight: bolder;
+  border-bottom: solid white;
+  background-color: black;
+}
+
+.listItemAnnotations {
+  font-style: italic;
+}
+
+.createOpen {
+  position: relative;
+  z-index: 100;
+  overflow: hidden;
+  height: 400px;
+  background-color: blue;
+  transition: 0.5s;
+  // animation: name duration timing-function delay iteration-count direction
+  //   fill-mode;
+}
+
+.createClose {
+  background-color: blue;
+  overflow: hidden;
+  height: 0px;
+  visibility: hidden;
+  transition: height 0.5s, background-color 2s, visibility 0.5s;
+}
+
+.startAnimation {
+  background-color: white;
+  animation-name: drop;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-in;
+}
+
+.endAnimation {
+  // background-color: yellow;
+  animation-name: runOut;
+  animation-duration: 0.1s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes openPublicSelection {
+  from {
+    // background-color: white;
+    clip-path: circle(0px at 0% 0%);
+    // height: 0px;
+  }
+  to {
+    // background-color: blue;
+    clip-path: circle(2000px at 0% 0%);
+    // height: 100vh;
+  }
+}
+
+@keyframes runIn {
+  from {
+    // margin-left: 0px !important;
+    transform: translateY(-200px);
+  }
+  to {
+    // margin-left: 300px !important;
+    transform: translateY(0);
+  }
+}
+
+@keyframes runOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(200px) translateX(-50%);
+  }
+}
+
+@keyframes drop {
+  0% {
+    transform: translateY(-200px);
+  }
+  70% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes moveDown {
+  from {
+    margin-top: 0px;
+  }
+  to {
+    margin-top: 400px;
+  }
+}
