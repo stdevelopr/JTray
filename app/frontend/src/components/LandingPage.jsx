@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./LandingPage.module.scss";
 import Auth from "./Auth.jsx";
-
+import Logo from "./construct.gif";
 export default () => {
   const [login, setLogin] = useState(false);
   const [register, setRegister] = useState(false);
@@ -22,7 +22,7 @@ export default () => {
   };
 
   return (
-    <div>
+    <div className={styles.landingContainer}>
       <header className={styles.header}>
         <h3>Jtray</h3>
         <span onClick={() => loginControl("register")}>Register</span>
@@ -38,6 +38,7 @@ export default () => {
       ) : (
         ""
       )}
+      <img src={Logo} className={styles.img} />
     </div>
   );
 };

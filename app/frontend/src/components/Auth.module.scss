@@ -1,7 +1,9 @@
 .modalPanel {
   text-align: center;
   height: calc(100vh - 60px);
-  // background-color: red;
+  width: 100vw;
+  position: absolute;
+  z-index: 10;
 }
 
 .window {

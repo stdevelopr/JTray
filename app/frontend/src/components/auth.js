@@ -7,8 +7,9 @@
 
 import axios from "axios";
 
-const HOST_ADDRESS = "127.0.0.1";
-const PORT = "5000";
+const HOST_ADDRESS =
+  location.protocol + "//" + location.host + location.pathname;
+
 // name of the key containing the token to be saved in the local storage
 const token_name = "Jtoken";
 
@@ -17,7 +18,7 @@ const token_name = "Jtoken";
 export async function authenticate(username, password) {
   let auth = false;
   await axios
-    .post(`http://${HOST_ADDRESS}:${PORT}/api/login`, {
+    .post(`${HOST_ADDRESS}api/login`, {
       username: username,
       password: password
     })
@@ -32,28 +33,12 @@ export async function authenticate(username, password) {
   return auth;
 }
 
-// verifies if the token in the local storage is true or false.
-// export async function isAuthenticated() {
-//   const token = getToken();
-//   let auth = false;
-//   await axios
-//     .post(`http://${HOST_ADDRESS}:${PORT}/api/login/verify`, { token: token })
-//     .then(res => {
-//       if (res.data) {
-//         auth = true;
-//       } else {
-//         auth = false;
-//       }
-//     });
-//   return auth;
-// }
-
 // registers a new user
 export async function register(username, password) {
   let success = false;
   if (username == "" || password == "") throw "empty fields";
   await axios
-    .post(`http://${HOST_ADDRESS}:${PORT}/api/register`, {
+    .post(`${HOST_ADDRESS}api/register`, {
       username: username,
       password: password,
       admin: true
