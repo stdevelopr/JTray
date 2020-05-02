@@ -29,7 +29,7 @@ const token = getToken();
 // set the connection with the graphql server
 const client = new ApolloClient({
   cache,
-  uri: `${HOST_ADDRESS}graphql`,
+  uri: "/graphql",
   resolvers: {},
   request: operation => {
     // data to be sent on every request
