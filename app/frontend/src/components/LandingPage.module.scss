@@ -1,0 +1,17 @@
+.header {
+  text-align: left;
+  height: 50px;
+  background-color: black;
+  color: white;
+  span {
+    float: right;
+    padding: 10px;
+    &:hover {
+      color: yellow;
+    }
+  }
+  h3 {
+    padding: 10px;
+    display: inline-block;
+  }
+}

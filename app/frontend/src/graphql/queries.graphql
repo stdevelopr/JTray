@@ -1,0 +1,52 @@
+import gql from "graphql-tag";
+  
+export const GET_PUBLIC_POLLS = gql `
+query PUBLIC_POLLS {
+  publicPolls {
+    title
+    id
+    createdByUserId
+    annotations
+  }
+}
+`
+export const GET_TRAYS = gql `
+  query pollTrays($pollId: String!) {
+    pollTrays(pollId: $pollId) {
+      id
+      title
+      cards {
+        id
+        text
+        favoritedBy
+      }
+    }
+  }
+  `
+
+  export const GET_USER_INFO = gql `
+  query USER {
+    userId @client
+    admin @client
+  }
+  `
+
+export const GET_MAIN_POLL = gql `
+  query MAIN_POLL {
+    mainPoll @client
+  }
+`
+
+  export const GET_USER_POLLS = gql `
+  query getUser($userId: String!) {
+  getUser(userId: $userId) {
+    polls {
+      id
+      title
+      createdByUserId
+      annotations
+    }
+    id
+  }
+}
+  `

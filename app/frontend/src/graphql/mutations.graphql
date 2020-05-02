@@ -1,0 +1,140 @@
+import gql from "graphql-tag";
+
+export const ADD_POLL = gql`
+mutation addPoll($title: String!, $createdByUserId: String!, $visibility: String!, $annotations: String!){
+  __typename
+  addPoll(title: $title, createdByUserId: $createdByUserId, visibility: $visibility, annotations: $annotations) {
+    id
+    polls{
+      title
+      id
+      createdByUserId
+      annotations
+    }
+  }
+}
+`;
+
+export const DELETE_POLL = gql`
+mutation deletePoll($pollId: String!) {
+  __typename
+  deletePoll(pollId: $pollId){
+    status
+  }
+}
+`
+
+export const DELETE_TRAY = gql`
+mutation deleteTray($trayId: String!) {
+  __typename
+  deleteTray(trayId: $trayId){
+    status
+  }
+}
+`
+
+export const DELETE_CARD = gql`
+mutation deleteCard($trayId: String!, $cardId: String!) {
+  __typename
+  deleteCard(trayId: $trayId, cardId: $cardId){
+      id
+      title
+      cards {
+        id
+        text
+        favoritedBy
+      }
+  }
+}
+`
+
+export const ADD_TRAY = gql`
+  mutation addTray($title: String!, $pollId: String!, $userId: String!) {
+    addTray(title: $title, pollId: $pollId, userId: $userId) {
+      id
+      title
+      cards{
+        id
+      }
+    }
+  }
+`;
+
+export const ADD_CARD = gql`
+  mutation addCard($trayId: String!, $text: String!, $userId: String!) {
+    addCard(trayId: $trayId, text: $text, userId: $userId) {
+      id
+      title
+      cards {
+        id
+        text
+        favoritedBy
+      }
+    }
+  }
+`;
+
+
+export const SWAP_TRAY = gql`
+  mutation swapTrayMutation(
+    $pollId: String!
+    $fromIndex: String!
+    $toIndex: String!
+  ) {
+    swapTray(
+      pollId: $pollId
+      fromIndex: $fromIndex
+      toIndex: $toIndex
+    ) {
+      allTrays{
+      id
+      title
+      index
+      cards{
+        id
+        text
+      }
+      }
+    }
+  }
+`;
+
+export const SWAP_CARD = gql`
+  mutation swapCardMutation(
+    $fromTrayId: String!
+    $toTrayId: String!
+    $fromCardIndex: Int!
+    $toCardIndex: Int!
+  ) {
+    swapCard(
+      fromTrayId: $fromTrayId
+      toTrayId: $toTrayId
+      fromCardIndex: $fromCardIndex
+      toCardIndex: $toCardIndex
+    ) {
+      trays{
+      id
+      cards{
+        id
+        text
+      }
+      }
+    }
+  }
+`;
+
+export const SET_CARD_FAVORITE = gql`
+mutation setCardFavorite (
+  $trayId: String!
+  $cardId: String!
+  $userId: String!
+  $favoriteStatus: Boolean!
+){
+  setCardFavorite(cardId: $cardId, trayId: $trayId, userId: $userId, favoriteStatus: $favoriteStatus) {
+    cards {
+      id
+      favoritedBy
+    }
+  }
+}
+`
