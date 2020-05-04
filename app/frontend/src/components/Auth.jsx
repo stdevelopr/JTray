@@ -8,9 +8,9 @@ import styles from "./Auth.module.scss";
 function Auth({ action, show, closeCallback }) {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-
-  // at first supposes the user is  already regitered and renders the login component
+  const [registerMsg, setRegisterMsg] = useState("");
   const [registered, setRegistered] = useState(false);
+  const [title, setTitle] = useState(action);
 
   const node = useRef();
 
@@ -41,14 +41,27 @@ function Auth({ action, show, closeCallback }) {
         <form
           onSubmit={e => {
             e.preventDefault();
-            authenticate(user, password).then(auth => {
-              if (auth) {
+            authenticate(user, password)
+              .then(res => {
+                setRegisterMsg(res);
+                setRegistered(true);
                 window.location.reload();
-              }
-            });
+              })
+              .catch(err => {
+                setRegisterMsg(err.response.data);
+              });
           }}
         >
           {userPass()}
+          <div
+            className={
+              registered
+                ? styles.successRegisterMessage
+                : styles.failRegisterMessage
+            }
+          >
+            {registerMsg}
+          </div>
 
           <button className={styles.loginButton} type="submit">
             Login
@@ -60,13 +73,22 @@ function Auth({ action, show, closeCallback }) {
 
   // renders a register component if the user is not registered yet.
   const renderRegister = () => {
+    // const registerMsg = useRef();
     return (
       <div>
         <form
           onSubmit={e => {
             e.preventDefault();
-            register(user, password).then(res => console.log(res));
-            setRegistered(true);
+            register(user, password)
+              .then(res => {
+                setRegisterMsg(res.data);
+                setRegistered(true);
+                setTitle("Login");
+              })
+              .catch(err => {
+                setRegisterMsg(err.response.data);
+              });
+
             setUser("");
             setPassword("");
           }}
@@ -79,6 +101,15 @@ function Auth({ action, show, closeCallback }) {
               onChange={e => setPassword(e.target.value)}
             />
           </div> */}
+          <div
+            className={
+              registered
+                ? styles.successRegisterMessage
+                : styles.failRegisterMessage
+            }
+          >
+            {registerMsg}
+          </div>
           <button className={styles.registerButton} type="submit">
             Register
           </button>
@@ -101,7 +132,7 @@ function Auth({ action, show, closeCallback }) {
       }}
     >
       <div className={styles.window}>
-        {action}
+        {title}
         {login_register}
       </div>
     </div>

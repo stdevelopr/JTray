@@ -58,7 +58,7 @@ def login():
                 token = jwt.encode(payload, JWT_SECRET, algorithm='HS256').decode('utf-8')
                 return jsonify({"token":token}), 200
             else:
-                return "wrong password!", 403  
+                return "Wrong password!", 403  
         else:
             return "User not found!", 404
        
@@ -73,11 +73,11 @@ def register():
         username = data['username']
         password = data['password']
         if db.Login.find({"username": username}).count():
-            return "username already in use", 409
+            return "Username already in use", 409
         db.Login.insert_one({"username": username, "password": sha256_crypt.encrypt(password)})
-        return 'success', 200
+        return 'Registered successfully', 200
     except:
-        return "error", 500
+        return "Something went wrong", 500
 
 ##########################################################################################3
 

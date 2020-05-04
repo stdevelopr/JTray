@@ -16,7 +16,7 @@ const token_name = "Jtoken";
 // verifies if the user is valid, and set the token in the local storage
 // The JWT token should include a userId field
 export async function authenticate(username, password) {
-  let auth = false;
+  // let auth = false;
   await axios
     .post(`${HOST_ADDRESS}api/login`, {
       username: username,
@@ -24,33 +24,22 @@ export async function authenticate(username, password) {
     })
     .then(res => {
       localStorage.setItem(token_name, res.data.token);
-      auth = true;
     })
     .catch(err => {
-      console.log("error: ", err.response.data);
-      auth = false;
+      throw err;
     });
-  return auth;
+  return "Success";
 }
 
 // registers a new user
-export async function register(username, password) {
-  let success = false;
+export function register(username, password) {
   if (username == "" || password == "") throw "empty fields";
-  await axios
-    .post(`${HOST_ADDRESS}api/register`, {
-      username: username,
-      password: password,
-      admin: true
-    })
-    .then(res => {
-      if (res.data) {
-        success = true;
-      } else {
-        success = false;
-      }
-    });
-  return success;
+
+  return axios.post(`${HOST_ADDRESS}api/register`, {
+    username: username,
+    password: password,
+    admin: true
+  });
 }
 
 // gets the token from the local storage.

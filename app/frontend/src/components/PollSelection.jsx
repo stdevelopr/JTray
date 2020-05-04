@@ -4,7 +4,6 @@ import { withApollo } from "@apollo/react-hoc";
 import { GET_MAIN_POLL } from "../graphql/queries.graphql";
 
 const PollSelection = ({ publicPolls, closeCallback, client }) => {
-  console.log("PUBLIC POLL", publicPolls);
   const selectPollAndCloseSelection = (
     pollId,
     pollTitle,
