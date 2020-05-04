@@ -15,7 +15,6 @@ export default function SimpleModal({ trayId, cardId }) {
 
   const handleOpen = e => {
     setOpen(true);
-    console.log(cardId);
     // setModalX(e.clientX);
   };
 
@@ -31,6 +30,10 @@ export default function SimpleModal({ trayId, cardId }) {
       }
     });
     handleClose();
+  };
+
+  const jiraExport = cardId => {
+    console.log("export", cardId);
   };
 
   return (
@@ -54,7 +57,7 @@ export default function SimpleModal({ trayId, cardId }) {
           <div className={styles.paper}>
             <h2 id="transition-modal-title">Card Options</h2>
             <div onClick={() => deleteCard(trayId, cardId)}>Delete</div>
-            <div>Export to JIRA</div>
+            <div onClick={() => jiraExport(cardId)}>Export to JIRA</div>
           </div>
         </Fade>
       </Modal>

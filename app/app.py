@@ -4,7 +4,9 @@ from flask_graphql import GraphQLView
 from functools import wraps
 import jwt
 from api.schema import schema, db
+from api.jira import Jira
 from passlib.hash import sha256_crypt
+import json
 
 app = Flask(__name__)
 JWT_SECRET = os.environ.get("JWT_SECRET")
@@ -38,6 +40,38 @@ graphql_view = GraphQLView.as_view(
 
 # Endpoint to run queries
 app.add_url_rule("/graphql", view_func=token_required(graphql_view), methods=['GET','POST'])
+
+
+# JIRA API
+######################################################################
+@app.route('/api/jira/get')
+def jira_get():
+    # it = Jira().create_issue(body)
+    response = Jira().get_projects()
+    projects = response.json()
+    for i in projects:
+        print('Todo-  Save info: ', i['name'], i['key'], i['id'])
+
+    return jsonify(response.json())
+
+@app.route('/api/jira/post')
+def jira_post():
+    body = {
+        "fields": {
+            "project": {
+                "id": "10000"
+            },
+            "summary": "New formula",
+            "description": "Testing...",
+            "issuetype": {
+                "name": "Story"
+            }
+        }
+    }
+    response = Jira().create_issue(body)
+    return response.json()
+
+
 
 
 

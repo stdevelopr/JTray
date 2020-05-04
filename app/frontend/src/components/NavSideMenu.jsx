@@ -7,6 +7,7 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { useMutation } from "@apollo/react-hooks";
 import { DELETE_POLL } from "../graphql/mutations.graphql";
 import { GET_USER_POLLS, GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
+import SettingsIcon from "@material-ui/icons/Settings";
 // import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 const NavSideMenu = ({
@@ -62,6 +63,10 @@ const NavSideMenu = ({
     });
   };
 
+  const jiraConfig = () => {
+    alert("under construction...");
+  };
+
   useEffect(() => {}, []);
 
   return (
@@ -86,6 +91,11 @@ const NavSideMenu = ({
         <div className={styles.logo}>
           <h1 className={styles.title}>{pollTitle}</h1>
           <div>{annotations}</div>
+        </div>
+        <div className={styles.jiraIcon}>
+          <IconButton aria-label="settings" onClick={() => jiraConfig()}>
+            <SettingsIcon />
+          </IconButton>
         </div>
       </nav>
       <div className={styles.parentHeight}>
