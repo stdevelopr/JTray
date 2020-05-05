@@ -44,32 +44,32 @@ app.add_url_rule("/graphql", view_func=token_required(graphql_view), methods=['G
 
 # JIRA API
 ######################################################################
-@app.route('/api/jira/get')
-def jira_get():
-    # it = Jira().create_issue(body)
-    response = Jira().get_projects()
-    projects = response.json()
-    for i in projects:
-        print('Todo-  Save info: ', i['name'], i['key'], i['id'])
+# @app.route('/api/jira/get')
+# def jira_get():
+#     # it = Jira().create_issue(body)
+#     response = Jira().get_projects()
+#     projects = response.json()
+#     for i in projects:
+#         print('Todo-  Save info: ', i['name'], i['key'], i['id'])
 
-    return jsonify(response.json())
+#     return jsonify(response.json())
 
-@app.route('/api/jira/post')
-def jira_post():
-    body = {
-        "fields": {
-            "project": {
-                "id": "10000"
-            },
-            "summary": "New formula",
-            "description": "Testing...",
-            "issuetype": {
-                "name": "Story"
-            }
-        }
-    }
-    response = Jira().create_issue(body)
-    return response.json()
+# @app.route('/api/jira/post')
+# def jira_post():
+#     body = {
+#         "fields": {
+#             "project": {
+#                 "id": "10000"
+#             },
+#             "summary": "New formula",
+#             "description": "Testing...",
+#             "issuetype": {
+#                 "name": "Story"
+#             }
+#         }
+#     }
+#     response = Jira().create_issue(body)
+#     return response.json()
 
 
 
