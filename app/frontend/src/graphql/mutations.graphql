@@ -138,3 +138,12 @@ mutation setCardFavorite (
   }
 }
 `
+
+export const SET_USER_JIRA = gql`
+mutation setJira ($userId: String!, $jiraEmail: String!, $jiraDomain: String!, $jiraToken:String!) {
+  __typename
+  setJira(userId: $userId, jiraEmail: $jiraEmail, jiraDomain: $jiraDomain, jiraToken: $jiraToken) {
+    status
+  }
+}
+`

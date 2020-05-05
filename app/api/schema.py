@@ -6,6 +6,7 @@
 import graphene
 from bson.objectid import ObjectId
 from pymongo import MongoClient, ReturnDocument
+from api.jira import Jira
 import os
 
 database = os.environ.get("MONGODB")
@@ -34,6 +35,11 @@ class Poll(graphene.ObjectType):
     createdByUserId = graphene.String()
     annotations = graphene.String()
 
+class JiraProject(graphene.ObjectType):
+    name = graphene.String()
+    key = graphene.String()
+    id = graphene.Int()
+
 class User(graphene.ObjectType):
     _id = graphene.String(name='id')
     polls = graphene.List(Poll)
@@ -47,6 +53,7 @@ class Query(graphene.ObjectType):
     pollTrays = graphene.List(Tray, pollId= graphene.String())
     getUser = graphene.Field(User, userId = graphene.String())
     publicPolls = graphene.List(Poll)
+    jiraProjects = graphene.List(JiraProject, userId = graphene.String())
 
     def resolve_publicPolls(self, info):
         polls = db.Polls.find({"$or" :[{"visibility":"public"},{"visibility":"password"}]}).sort("_id",-1)
@@ -62,7 +69,21 @@ class Query(graphene.ObjectType):
     def resolve_getUser(self, info, userId):
         polls = db.Polls.find({"createdByUserId": userId}).sort("_id",-1)
 
-        return User(_id= userId, polls=list(polls))
+        return User(_id= userId, polls=list (polls))
+
+    def resolve_jiraProjects(self, info, userId):
+        user_info = db.Users.find_one({"userId":userId})
+        domain = user_info['jiraDomain']
+        email = user_info['jiraEmail']
+        token = user_info['jiraToken']
+        project_list = []
+        response = Jira(domain, email, token).get_projects()
+        projects = response.json()
+        for i in projects:
+            project_list.append({"name": i['name'] ,"key":i['key'], "id":i['id']})
+        
+        return project_list
+
 
 
 
@@ -305,6 +326,24 @@ class SetFavorite(graphene.Mutation):
 
         return newCards
 
+class SetJira(graphene.Mutation):
+    """
+    Set the Jira info for a given user
+    """
+    class Arguments:
+        userId = graphene.String()
+        jiraDomain = graphene.String()
+        jiraEmail = graphene.String()
+        jiraToken = graphene.String()
+    
+    status = graphene.String()
+
+    def mutate(self, info, userId, jiraDomain, jiraEmail, jiraToken):
+        db.Users.update_one({"userId": userId}, {"$set" : {"jiraDomain": jiraDomain, "jiraEmail":jiraEmail, "jiraToken":jiraToken}}, upsert=True)
+        status = "OK"
+        return status
+
+
 class Mutation(graphene.ObjectType):
     addCard = AddCard.Field()
     addTray = AddTray.Field()
@@ -315,5 +354,6 @@ class Mutation(graphene.ObjectType):
     deletePoll = DeletePoll.Field()
     deleteTray = DeleteTray.Field()
     deleteCard = DeleteCard.Field()
+    setJira = SetJira.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

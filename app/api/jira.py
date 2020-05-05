@@ -8,9 +8,9 @@ from .config import jira_email, jira_user_url, jira_token
 
 
 class Jira():
-    def __init__(self):
-        self.user_url = jira_user_url
-        self.auth = HTTPBasicAuth(jira_email, jira_token)
+    def __init__(self, domain, email, token):
+        self.user_url = f"https://{domain}.atlassian.net/"
+        self.auth = HTTPBasicAuth(email, token)
         self.headers = {
         "Content-Type": "application/json"
         }
@@ -32,7 +32,6 @@ class Jira():
         headers= self.headers,
         auth=self.auth
         )
-
         return response
 
 

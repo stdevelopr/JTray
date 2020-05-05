@@ -5,7 +5,7 @@ import { GET_MAIN_POLL } from "../graphql/queries.graphql";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { useMutation } from "@apollo/react-hooks";
-import { DELETE_POLL } from "../graphql/mutations.graphql";
+import { DELETE_POLL, SET_USER_JIRA } from "../graphql/mutations.graphql";
 import { GET_USER_POLLS, GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 import SettingsIcon from "@material-ui/icons/Settings";
 // import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -22,7 +22,13 @@ const NavSideMenu = ({
 }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openItemModalId, setOpenItemModalId] = useState(null);
+  const [openJiraConfigModal, setOpenJiraConfigModal] = useState(false);
+  const [jiraDomain, setJiraDomain] = useState("");
+  const [jiraEmail, setJiraEmail] = useState("");
+  const [jiraToken, setJiraToken] = useState("");
+
   const [deletePollHook, {}] = useMutation(DELETE_POLL);
+  const [setUserJiraHook, {}] = useMutation(SET_USER_JIRA);
 
   const handleOpen = e => {
     setOpenItemModalId(e.target.closest("button").getAttribute("pollid"));
@@ -63,8 +69,20 @@ const NavSideMenu = ({
     });
   };
 
-  const jiraConfig = () => {
-    alert("under construction...");
+  const connectJira = () => {
+    alert("connecting... under construction!");
+  };
+
+  const saveJiraInfo = () => {
+    setUserJiraHook({
+      variables: {
+        userId: userId,
+        jiraDomain: jiraDomain,
+        jiraEmail: jiraEmail,
+        jiraToken: jiraToken
+      },
+      onCompleted: connectJira()
+    });
   };
 
   useEffect(() => {}, []);
@@ -93,7 +111,11 @@ const NavSideMenu = ({
           <div>{annotations}</div>
         </div>
         <div className={styles.jiraIcon}>
-          <IconButton aria-label="settings" onClick={() => jiraConfig()}>
+          Jira
+          <IconButton
+            aria-label="settings"
+            onClick={() => setOpenJiraConfigModal(!openJiraConfigModal)}
+          >
             <SettingsIcon />
           </IconButton>
         </div>
@@ -166,6 +188,29 @@ const NavSideMenu = ({
             );
           })}
         </div>
+        {openJiraConfigModal ? (
+          <div className={styles.jiraModal}>
+            <input
+              placeholder="jira domain"
+              value={jiraDomain}
+              onChange={e => setJiraDomain(e.target.value)}
+            ></input>
+            <input
+              placeholder="jira email"
+              value={jiraEmail}
+              onChange={e => setJiraEmail(e.target.value)}
+            ></input>
+            <input
+              placeholder="jira token"
+              value={jiraToken}
+              onChange={e => setJiraToken(e.target.value)}
+            ></input>
+            <button onClick={() => saveJiraInfo()}>Save</button>
+            <button onClick={() => connectJira()}>Connect</button>
+          </div>
+        ) : (
+          ""
+        )}
         {/* {openItemModal ? (
           <div
             style={{
