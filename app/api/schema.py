@@ -45,6 +45,11 @@ class JiraProject(graphene.ObjectType):
     key = graphene.String()
     id = graphene.Int()
 
+class JiraProjectInput(graphene.InputObjectType):
+    name = graphene.String()
+    key = graphene.String()
+    id = graphene.Int()
+
 class User(graphene.ObjectType):
     _id = graphene.String(name='id')
     polls = graphene.List(Poll)
@@ -333,7 +338,7 @@ class SetFavorite(graphene.Mutation):
 
         return newCards
 
-class SetJira(graphene.Mutation):
+class SetJiraInfo(graphene.Mutation):
     """
     Set the Jira info for a given user
     """
@@ -350,6 +355,21 @@ class SetJira(graphene.Mutation):
         status = "OK"
         return status
 
+class SetJiraProjects(graphene.Mutation):
+    """
+    Set the Jira projects for a given user
+    """
+    class Arguments:
+        userId = graphene.String()
+        jiraProjects = graphene.List(JiraProjectInput)
+    
+    status = graphene.String()
+
+    def mutate(self, info, userId, jiraProjects):
+        db.Users.update_one({"userId": userId}, {"$set" : {"jiraProjects": jiraProjects}})
+        status = "OK"
+        return status
+
 
 class Mutation(graphene.ObjectType):
     addCard = AddCard.Field()
@@ -361,6 +381,7 @@ class Mutation(graphene.ObjectType):
     deletePoll = DeletePoll.Field()
     deleteTray = DeleteTray.Field()
     deleteCard = DeleteCard.Field()
-    setJira = SetJira.Field()
+    setJiraInfo = SetJiraInfo.Field()
+    setJiraProjects = SetJiraProjects.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
