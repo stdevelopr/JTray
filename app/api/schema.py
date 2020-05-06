@@ -35,6 +35,11 @@ class Poll(graphene.ObjectType):
     createdByUserId = graphene.String()
     annotations = graphene.String()
 
+class JiraData(graphene.ObjectType):
+    jiraDomain = graphene.String()
+    jiraEmail = graphene.String()
+    jiraToken = graphene.String()
+
 class JiraProject(graphene.ObjectType):
     name = graphene.String()
     key = graphene.String()
@@ -43,6 +48,7 @@ class JiraProject(graphene.ObjectType):
 class User(graphene.ObjectType):
     _id = graphene.String(name='id')
     polls = graphene.List(Poll)
+    jiraInfo = graphene.Field(JiraData)
 
 
 ####################################################
@@ -67,9 +73,10 @@ class Query(graphene.ObjectType):
         return trays_list
 
     def resolve_getUser(self, info, userId):
+        jiraInfo = db.Users.find_one({"userId": userId})
         polls = db.Polls.find({"createdByUserId": userId}).sort("_id",-1)
 
-        return User(_id= userId, polls=list (polls))
+        return User(_id= userId, polls=list (polls), jiraInfo=jiraInfo)
 
     def resolve_jiraProjects(self, info, userId):
         user_info = db.Users.find_one({"userId":userId})

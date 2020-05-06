@@ -47,6 +47,11 @@ export const GET_MAIN_POLL = gql `
       annotations
     }
     id
+    jiraInfo{
+      jiraDomain
+      jiraEmail
+      jiraToken
+    }
   }
 }
   `

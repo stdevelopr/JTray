@@ -30,6 +30,7 @@ const Jtray = ({
         pollTitle={mainPoll.title}
         annotations={mainPoll.annotations}
         userId={userInfo.id}
+        jiraInfo={userInfo.jiraInfo}
       >
         {/* <h1>{pollTitle}</h1> */}
         {/* <BoardHeader pollTitle={pollTitle} /> */}
