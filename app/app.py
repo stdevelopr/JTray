@@ -3,8 +3,8 @@ from flask import Flask, render_template, request, jsonify
 from flask_graphql import GraphQLView
 from functools import wraps
 import jwt
-from api.schema import schema, db
-from api.jira import Jira
+from . api.schema import schema, db
+from . api.jira import Jira
 from passlib.hash import sha256_crypt
 import json
 
@@ -118,7 +118,3 @@ def register():
 @app.route('/', defaults={'path': ''})
 def main(path):
     return render_template('index.html')
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

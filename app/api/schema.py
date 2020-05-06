@@ -6,7 +6,7 @@
 import graphene
 from bson.objectid import ObjectId
 from pymongo import MongoClient, ReturnDocument
-from api.jira import Jira
+from .jira import Jira
 import os
 
 database = os.environ.get("MONGODB")
