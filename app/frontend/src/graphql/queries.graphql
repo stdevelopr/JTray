@@ -51,6 +51,11 @@ export const GET_MAIN_POLL = gql `
       jiraDomain
       jiraEmail
       jiraToken
+      jiraProjects{
+        name
+        key
+        id
+      }
     }
   }
 }

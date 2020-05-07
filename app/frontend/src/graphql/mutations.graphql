@@ -147,11 +147,3 @@ mutation setJiraInfo ($userId: String!, $jiraEmail: String!, $jiraDomain: String
   }
 }
 `
-
-export const SAVE_USER_JIRA_PROJECTS = gql`
-mutation setJiraProjects ($userId: String!, $jiraProjects: [JiraProjectInput]) {
-  setJiraProjects(userId: $userId, jiraProjects:$jiraProjects) {
-    status
-  }
-}
-`

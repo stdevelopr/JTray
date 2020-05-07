@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./JiraModal.module.scss";
 import { useMutation } from "@apollo/react-hooks";
-import {
-  SAVE_USER_JIRA_INFO,
-  SAVE_USER_JIRA_PROJECTS
-} from "../graphql/mutations.graphql";
-import { useLazyQuery } from "@apollo/react-hooks";
-import { GET_JIRA_PROJECTS } from "../graphql/queries.graphql";
-import { style } from "@material-ui/system";
+import { SAVE_USER_JIRA_INFO } from "../graphql/mutations.graphql";
+import { GET_USER_POLLS } from "../graphql/queries.graphql";
 
 export default function JiraModal({ jiraInfo, userId }) {
   const [jiraDomain, setJiraDomain] = useState(
@@ -20,46 +15,21 @@ export default function JiraModal({ jiraInfo, userId }) {
     jiraInfo ? jiraInfo.jiraToken : ""
   );
 
-  const [setUserJiraHook, {}] = useMutation(SAVE_USER_JIRA_INFO);
-
-  const [getJiraProjects, { called, loading, data }] = useLazyQuery(
-    GET_JIRA_PROJECTS,
-    { variables: { userId: userId } }
-  );
-
-  const [saveJiraProjects, {}] = useMutation(SAVE_USER_JIRA_PROJECTS);
-
-  useEffect(() => {
-    // everytime we have data from getting the projects save it to the user table
-    if (data) {
-      const list = data.jiraProjects.map(item => ({
-        name: item.name,
-        key: item.key,
-        id: item.id
-      }));
-      saveJiraProjects({
-        variables: {
-          userId: userId,
-          jiraProjects: list
-        }
-      });
-    }
-  }, [data]);
+  const [
+    saveJiraInfoHook,
+    { loading: infoMutationLoading, error: infoMutationError }
+  ] = useMutation(SAVE_USER_JIRA_INFO);
 
   const saveJiraInfo = () => {
-    setUserJiraHook({
+    saveJiraInfoHook({
       variables: {
         userId: userId,
         jiraDomain: jiraDomain,
         jiraEmail: jiraEmail,
         jiraToken: jiraToken
       },
-      onCompleted: connectJira()
+      refetchQueries: [{ query: GET_USER_POLLS, variables: { userId: userId } }]
     });
-  };
-
-  const connectJira = () => {
-    getJiraProjects();
   };
 
   return (
@@ -79,10 +49,18 @@ export default function JiraModal({ jiraInfo, userId }) {
         value={jiraToken}
         onChange={e => setJiraToken(e.target.value)}
       ></input>
-      <button onClick={() => saveJiraInfo()}>Save</button>
-      <button onClick={() => connectJira()}>Connect</button>
-      {data
-        ? data.jiraProjects.map(item => (
+      <button onClick={() => saveJiraInfo()}>Connect/Atualize</button>
+      {infoMutationLoading && (
+        <div className={styles.jiraProjectLoading}>Loading...</div>
+      )}
+      {infoMutationError && (
+        <div className={styles.jiraProjectLoading}>Error</div>
+      )}
+      {jiraInfo.jiraProjects && (
+        <div className={styles.jiraProjectsHeader}>Jira Projects</div>
+      )}
+      {jiraInfo.jiraProjects
+        ? jiraInfo.jiraProjects.map(item => (
             <div key={item.name} className={styles.jiraProjectItem}>
               {item.name}
             </div>

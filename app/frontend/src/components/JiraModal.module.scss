@@ -10,8 +10,26 @@
   }
 }
 
-.jiraProjectItem {
-  background-color: whitesmoke;
+.jiraProjectsHeader {
   text-align: center;
+  color: white;
+  text-decoration: underline;
+  font-weight: bold;
+  background-color: black;
+  margin: 0px;
+}
+
+.jiraProjectItem {
+  margin: 0px;
+  background-color: black;
+  text-align: center;
+  color: yellow;
+}
+
+.jiraProjectLoading {
+  text-align: center;
+  background-color: yellow;
+  margin: 0px;
+  color: black;
   border: solid red;
 }

@@ -6,6 +6,7 @@
 import graphene
 from bson.objectid import ObjectId
 from pymongo import MongoClient, ReturnDocument
+from graphql import GraphQLError
 from api.jira import Jira
 import os
 
@@ -35,20 +36,16 @@ class Poll(graphene.ObjectType):
     createdByUserId = graphene.String()
     annotations = graphene.String()
 
-class JiraData(graphene.ObjectType):
-    jiraDomain = graphene.String()
-    jiraEmail = graphene.String()
-    jiraToken = graphene.String()
-
 class JiraProject(graphene.ObjectType):
     name = graphene.String()
     key = graphene.String()
     id = graphene.Int()
 
-class JiraProjectInput(graphene.InputObjectType):
-    name = graphene.String()
-    key = graphene.String()
-    id = graphene.Int()
+class JiraData(graphene.ObjectType):
+    jiraDomain = graphene.String()
+    jiraEmail = graphene.String()
+    jiraToken = graphene.String()
+    jiraProjects = graphene.List(JiraProject)
 
 class User(graphene.ObjectType):
     _id = graphene.String(name='id')
@@ -351,22 +348,14 @@ class SetJiraInfo(graphene.Mutation):
     status = graphene.String()
 
     def mutate(self, info, userId, jiraDomain, jiraEmail, jiraToken):
-        db.Users.update_one({"userId": userId}, {"$set" : {"jiraDomain": jiraDomain, "jiraEmail":jiraEmail, "jiraToken":jiraToken}}, upsert=True)
-        status = "OK"
-        return status
-
-class SetJiraProjects(graphene.Mutation):
-    """
-    Set the Jira projects for a given user
-    """
-    class Arguments:
-        userId = graphene.String()
-        jiraProjects = graphene.List(JiraProjectInput)
-    
-    status = graphene.String()
-
-    def mutate(self, info, userId, jiraProjects):
-        db.Users.update_one({"userId": userId}, {"$set" : {"jiraProjects": jiraProjects}})
+        response = Jira(jiraDomain,jiraEmail, jiraToken).get_projects()
+        if response.status_code != 200:
+            raise GraphQLError('Error accessing your projects... Verify the info!')
+        project_list=[]
+        projects = response.json()
+        for i in projects:
+            project_list.append({"name": i['name'] ,"key":i['key'], "id":i['id']})
+        db.Users.update_one({"userId": userId}, {"$set" : {"jiraDomain": jiraDomain, "jiraEmail":jiraEmail, "jiraToken":jiraToken, "jiraProjects": project_list}}, upsert=True)
         status = "OK"
         return status
 
@@ -382,6 +371,5 @@ class Mutation(graphene.ObjectType):
     deleteTray = DeleteTray.Field()
     deleteCard = DeleteCard.Field()
     setJiraInfo = SetJiraInfo.Field()
-    setJiraProjects = SetJiraProjects.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
