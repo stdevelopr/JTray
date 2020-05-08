@@ -19,7 +19,6 @@ export default function SimpleModal({
   const [deleteCardHook, {}] = useMutation(DELETE_CARD);
   const [createJiraIssueHook, {}] = useMutation(CREATE_JIRA_ISSUE);
   // const [modalX, setModalX] = useState(0);
-
   const handleOpen = e => {
     setOpen(true);
   };
@@ -74,16 +73,20 @@ export default function SimpleModal({
         <Fade in={open}>
           <div className={styles.paper}>
             <h2 id="transition-modal-title">Card Options</h2>
-            <div>Export to JIRA</div>
-            {jiraInfo.jiraProjects.map(item => (
-              <div
-                key={item.name}
-                onClick={() => jiraExport(cardText, item)}
-                className={styles.jiraItem}
-              >
-                {item.name}
+            {jiraInfo && (
+              <div>
+                <div>Export to JIRA</div>
+                {jiraInfo.jiraProjects.map(item => (
+                  <div
+                    key={item.name}
+                    onClick={() => jiraExport(cardText, item)}
+                    className={styles.jiraItem}
+                  >
+                    {item.name}
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
             <div
               onClick={() => deleteCard(trayId, cardId)}
               className={styles.deleteItem}
