@@ -3,6 +3,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+from pprint import pprint
 from .config import jira_email, jira_user_url, jira_token
 
 
@@ -26,12 +27,13 @@ class Jira():
         return response
 
     def get_projects(self):
-        api = "/rest/api/2/project"
+        api = "/rest/api/2/issue/createmeta"
         response = requests.get(
         self.user_url + api,
         headers= self.headers,
         auth=self.auth
         )
+        
         return response
 
 

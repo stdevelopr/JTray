@@ -147,3 +147,13 @@ mutation setJiraInfo ($userId: String!, $jiraEmail: String!, $jiraDomain: String
   }
 }
 `
+
+
+export const CREATE_JIRA_ISSUE = gql`
+mutation createJiraIssue ($cardText: String!, $projectKey: String!, $issueType: String!, $summary: String!, $jiraEmail: String!, $jiraDomain: String!, $jiraToken:String!) {
+  __typename
+  createJiraIssue(cardText: $cardText, projectKey:$projectKey, issueType:$issueType, summary:$summary, jiraEmail: $jiraEmail, jiraDomain: $jiraDomain, jiraToken: $jiraToken) {
+    status
+  }
+}
+`

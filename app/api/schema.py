@@ -36,10 +36,18 @@ class Poll(graphene.ObjectType):
     createdByUserId = graphene.String()
     annotations = graphene.String()
 
+class JiraIssueType(graphene.ObjectType):
+    name =  graphene.String()
+    id =  graphene.String()
+    iconUrl =  graphene.String()
+
 class JiraProject(graphene.ObjectType):
     name = graphene.String()
     key = graphene.String()
     id = graphene.Int()
+    avatarUrls = graphene.String()
+    issuetypes = graphene.List(JiraIssueType)
+
 
 class JiraData(graphene.ObjectType):
     jiraDomain = graphene.String()
@@ -80,19 +88,22 @@ class Query(graphene.ObjectType):
 
         return User(_id= userId, polls=list (polls), jiraInfo=jiraInfo)
 
-    def resolve_jiraProjects(self, info, userId):
-        user_info = db.Users.find_one({"userId":userId})
-        domain = user_info['jiraDomain']
-        email = user_info['jiraEmail']
-        token = user_info['jiraToken']
-        project_list = []
-        response = Jira(domain, email, token).get_projects()
-        projects = response.json()
-        for i in projects:
-            project_list.append({"name": i['name'] ,"key":i['key'], "id":i['id']})
+    # def resolve_jiraProjects(self, info, userId):
+    #     user_info = db.Users.find_one({"userId":userId})
+    #     domain = user_info['jiraDomain']
+    #     email = user_info['jiraEmail']
+    #     token = user_info['jiraToken']
+    #     project_list = []
+    #     response = Jira(domain, email, token).get_projects()
+    #     projects = response.json()
+    #     print('-----------', projects)
+    #     # for i in projects:
+    #     #     project_list.append({"name": i['name'], "key": i['key'], "id": i['id'],
+    #     #                         "avatarUrls": i['avatarUrls'], "issuetypes": i['issuetypes']})
         
-        return project_list
-
+    #     print(project_list)
+        
+    #     return []
 
 
 
@@ -352,10 +363,46 @@ class SetJiraInfo(graphene.Mutation):
         if response.status_code != 200:
             raise GraphQLError('Error accessing your projects... Verify the info!')
         project_list=[]
-        projects = response.json()
+        issue_type_list = []
+        projects = response.json()['projects']
         for i in projects:
-            project_list.append({"name": i['name'] ,"key":i['key'], "id":i['id']})
+            for t in i['issuetypes']:
+                issue_type_list.append({'name':t['name'], 'id':t['id'], 'iconUrl':t['iconUrl']})
+            project_list.append({"name": i['name'], "key": i['key'], "id": i['id'],
+                                "avatarUrls": i['avatarUrls']['48x48'], "issuetypes": issue_type_list})
         db.Users.update_one({"userId": userId}, {"$set" : {"jiraDomain": jiraDomain, "jiraEmail":jiraEmail, "jiraToken":jiraToken, "jiraProjects": project_list}}, upsert=True)
+        status = "OK"
+        return status
+
+class CreateJiraIssue(graphene.Mutation):
+    """
+    Export a Jtray card to Jira
+    """
+    class Arguments:
+        cardText = graphene.String()
+        projectKey = graphene.String()
+        jiraDomain = graphene.String()
+        jiraEmail = graphene.String()
+        jiraToken = graphene.String()
+        issueType = graphene.String()
+        summary = graphene.String()
+
+    status = graphene.String()
+
+    def mutate(self, info, cardText, projectKey, issueType, summary, jiraDomain, jiraEmail, jiraToken):
+        payload = {
+            "fields": {
+                "project": {
+                    "key": projectKey
+                },
+                "summary": summary,
+                "description": cardText,
+                "issuetype": {
+                    "name": issueType
+                }
+            }
+        }
+        response = Jira(jiraDomain,jiraEmail, jiraToken).create_issue(payload)
         status = "OK"
         return status
 
@@ -371,5 +418,6 @@ class Mutation(graphene.ObjectType):
     deleteTray = DeleteTray.Field()
     deleteCard = DeleteCard.Field()
     setJiraInfo = SetJiraInfo.Field()
+    createJiraIssue = CreateJiraIssue.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

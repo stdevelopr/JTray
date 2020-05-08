@@ -55,18 +55,14 @@ export const GET_MAIN_POLL = gql `
         name
         key
         id
+        avatarUrls
+        issuetypes{
+          name
+          id
+          iconUrl
+        }
       }
     }
   }
 }
-  `
-
-export const GET_JIRA_PROJECTS = gql `
-  query jiraProjects($userId: String!) {
-    jiraProjects(userId: $userId) {
-      name
-      key
-      id
-    }
-  }
   `

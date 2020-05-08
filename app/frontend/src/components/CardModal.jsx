@@ -6,16 +6,22 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import styles from "./CardModal.module.scss";
 import { useMutation } from "@apollo/react-hooks";
-import { DELETE_CARD } from "../graphql/mutations.graphql";
+import { DELETE_CARD, CREATE_JIRA_ISSUE } from "../graphql/mutations.graphql";
 
-export default function SimpleModal({ trayId, cardId }) {
+export default function SimpleModal({
+  trayId,
+  trayTitle,
+  cardId,
+  cardText,
+  jiraInfo
+}) {
   const [open, setOpen] = useState(false);
   const [deleteCardHook, {}] = useMutation(DELETE_CARD);
+  const [createJiraIssueHook, {}] = useMutation(CREATE_JIRA_ISSUE);
   // const [modalX, setModalX] = useState(0);
 
   const handleOpen = e => {
     setOpen(true);
-    // setModalX(e.clientX);
   };
 
   const handleClose = () => {
@@ -32,8 +38,20 @@ export default function SimpleModal({ trayId, cardId }) {
     handleClose();
   };
 
-  const jiraExport = cardId => {
-    console.log("export", cardId);
+  const jiraExport = (cardText, jiraProject) => {
+    const issueType = jiraProject.issuetypes[0]["name"];
+    createJiraIssueHook({
+      variables: {
+        cardText: cardText,
+        projectKey: jiraProject.key,
+        issueType: issueType,
+        summary: `Jcard ${trayTitle}`,
+        jiraDomain: jiraInfo.jiraDomain,
+        jiraEmail: jiraInfo.jiraEmail,
+        jiraToken: jiraInfo.jiraToken
+      },
+      onCompleted: handleClose()
+    });
   };
 
   return (
@@ -56,8 +74,22 @@ export default function SimpleModal({ trayId, cardId }) {
         <Fade in={open}>
           <div className={styles.paper}>
             <h2 id="transition-modal-title">Card Options</h2>
-            <div onClick={() => deleteCard(trayId, cardId)}>Delete</div>
-            <div onClick={() => jiraExport(cardId)}>Export to JIRA</div>
+            <div>Export to JIRA</div>
+            {jiraInfo.jiraProjects.map(item => (
+              <div
+                key={item.name}
+                onClick={() => jiraExport(cardText, item)}
+                className={styles.jiraItem}
+              >
+                {item.name}
+              </div>
+            ))}
+            <div
+              onClick={() => deleteCard(trayId, cardId)}
+              className={styles.deleteItem}
+            >
+              Delete
+            </div>
           </div>
         </Fade>
       </Modal>

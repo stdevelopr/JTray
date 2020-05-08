@@ -16,7 +16,15 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 
 // function to render the board based on array of trays
-const renderTrays = (lists, onDragEnd, admin, userId, pollId, deleteTray) => {
+const renderTrays = (
+  lists,
+  onDragEnd,
+  admin,
+  userId,
+  pollId,
+  deleteTray,
+  jiraInfo
+) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-lists" type="list" direction="horizontal">
@@ -80,11 +88,13 @@ const renderTrays = (lists, onDragEnd, admin, userId, pollId, deleteTray) => {
                                     text={card.text}
                                     key={card.id}
                                     trayId={list.id}
+                                    trayTitle={list.title}
                                     cardId={card.id}
                                     snapshot={snapshot}
                                     userId={userId}
                                     admin={admin}
                                     favoritedBy={card.favoritedBy}
+                                    jiraInfo={jiraInfo}
                                   />
                                 </div>
                               )}
@@ -205,7 +215,7 @@ const updateSwapTrayCache = (client, data, fromIndex, toIndex, pollId) => {
 };
 
 // React component
-export const TrayBoard = ({ userId, admin, pollId }) => {
+export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
   const [swapCards, {}] = useMutation(SWAP_CARD);
   const [deleteTrayHook, {}] = useMutation(DELETE_TRAY);
 
@@ -273,6 +283,7 @@ export const TrayBoard = ({ userId, admin, pollId }) => {
     admin,
     userId,
     pollId,
-    deleteTray
+    deleteTray,
+    jiraInfo
   );
 };

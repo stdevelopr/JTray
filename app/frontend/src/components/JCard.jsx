@@ -14,10 +14,12 @@ export const JCard = ({
   text,
   snapshot,
   trayId,
+  trayTitle,
   cardId,
   favoritedBy,
   userId,
-  admin
+  admin,
+  jiraInfo
 }) => {
   const [open, setOpen] = React.useState(false);
   const [favorite, setFavorite] = React.useState(favoritedBy.includes(userId));
@@ -40,7 +42,13 @@ export const JCard = ({
           avatar={<Avatar>{admin ? countFavorite : "R"}</Avatar>}
           action={
             admin ? (
-              <CardModal trayId={trayId} cardId={cardId} />
+              <CardModal
+                trayId={trayId}
+                trayTitle={trayTitle}
+                cardId={cardId}
+                cardText={text}
+                jiraInfo={jiraInfo}
+              />
             ) : (
               <div
                 className={favorite ? styles.starfavorite : styles.star}
