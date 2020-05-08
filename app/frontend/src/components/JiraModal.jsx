@@ -56,10 +56,12 @@ export default function JiraModal({ jiraInfo, userId }) {
       {infoMutationError && (
         <div className={styles.jiraProjectLoading}>Error</div>
       )}
-      {jiraInfo.jiraProjects && (
-        <div className={styles.jiraProjectsHeader}>Jira Projects</div>
-      )}
-      {jiraInfo.jiraProjects
+      {jiraInfo
+        ? jiraInfo.jiraProjects && (
+            <div className={styles.jiraProjectsHeader}>Jira Projects</div>
+          )
+        : ""}
+      {jiraInfo
         ? jiraInfo.jiraProjects.map(item => (
             <div key={item.name} className={styles.jiraProjectItem}>
               {item.name}
