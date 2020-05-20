@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./NavSideMenu.module.scss";
 import { withApollo } from "@apollo/react-hoc";
 import { GET_MAIN_POLL } from "../graphql/queries.graphql";
@@ -67,6 +67,8 @@ const NavSideMenu = ({
     });
   };
 
+  const modalOpenButton = useRef();
+
   useEffect(() => {}, []);
 
   return (
@@ -95,6 +97,7 @@ const NavSideMenu = ({
         <div className={styles.jiraIcon}>
           Jira
           <IconButton
+            ref={modalOpenButton}
             aria-label="settings"
             onClick={() => setOpenJiraConfigModal(!openJiraConfigModal)}
           >
@@ -170,10 +173,13 @@ const NavSideMenu = ({
             );
           })}
         </div>
-        {openJiraConfigModal ? (
-          <JiraModal jiraInfo={jiraInfo} userId={userId} />
-        ) : (
-          ""
+        {openJiraConfigModal && (
+          <JiraModal
+            jiraInfo={jiraInfo}
+            userId={userId}
+            setOpenCallBack={setOpenJiraConfigModal}
+            refButton={modalOpenButton}
+          />
         )}
         <div
           className={`${styles.content} ${

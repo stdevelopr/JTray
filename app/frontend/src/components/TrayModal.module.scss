@@ -1,0 +1,25 @@
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paper {
+  background-color: white;
+  border: 2px solid;
+  box-shadow: blue;
+  padding: 10px;
+}
+
+.deleteItem {
+  text-align: center;
+  border: solid red;
+  color: red;
+  margin: 15px;
+}
+
+.jiraItem {
+  text-align: center;
+  background-color: black;
+  color: yellow;
+}

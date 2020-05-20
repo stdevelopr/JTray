@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { JCard } from "./JCard.jsx";
 import { AddButton } from "./ActionButton.jsx";
+import TrayModal from "./TrayModal.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useQuery } from "@apollo/react-hooks";
 import { useMutation } from "@apollo/react-hooks";
@@ -23,110 +24,128 @@ const renderTrays = (
   userId,
   pollId,
   deleteTray,
-  jiraInfo
+  jiraInfo,
+  openTrayModal,
+  setOpenTrayModal,
+  trayId,
+  setTrayId
 ) => {
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="all-lists" type="list" direction="horizontal">
-        {provided => (
-          <div
-            className={styles.board}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {lists.map((list, index) => (
-              <Draggable
-                draggableId={String(list.id)}
-                isDragDisabled={!admin}
-                index={index}
-                key={list.id}
-              >
-                {(provided, snapshot) => (
-                  <div
-                    className={
-                      snapshot.isDragging ? styles.move : styles.static
-                    }
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                  >
-                    <div className={admin ? styles.listTitle : null}>
-                      <h3 {...provided.dragHandleProps}>{list.title}</h3>
-                      {admin ? (
-                        <IconButton
-                          aria-label="settings"
-                          onClick={e => deleteTray(list.id)}
-                          className={styles.verticalIcon}
-                        >
-                          <DeleteForeverIcon />
-                        </IconButton>
-                      ) : (
-                        ""
-                      )}
+    <div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="all-lists" type="list" direction="horizontal">
+          {provided => (
+            <div
+              className={styles.board}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {lists.map((list, index) => (
+                <Draggable
+                  draggableId={String(list.id)}
+                  isDragDisabled={!admin}
+                  index={index}
+                  key={list.id}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      className={
+                        snapshot.isDragging ? styles.move : styles.static
+                      }
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                    >
+                      <div className={admin ? styles.listTitle : null}>
+                        <h3 {...provided.dragHandleProps}>{list.title}</h3>
+                        {admin ? (
+                          <IconButton
+                            aria-label="settings"
+                            // onClick={e => deleteTray(list.id)}
+                            onClick={e => {
+                              setOpenTrayModal(!openTrayModal);
+                              setTrayId(list.id);
+                            }}
+                            className={styles.verticalIcon}
+                          >
+                            <DeleteForeverIcon />
+                          </IconButton>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                      <Droppable droppableId={String(list.id)}>
+                        {provided => (
+                          <div
+                            key={list.id}
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                          >
+                            {list.cards.map((card, index) => (
+                              <Draggable
+                                draggableId={String(card.id)}
+                                isDragDisabled={!admin}
+                                index={index}
+                                key={card.id}
+                              >
+                                {(provided, snapshot) => (
+                                  <div
+                                    className={styles.card}
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <JCard
+                                      text={card.text}
+                                      key={card.id}
+                                      trayId={list.id}
+                                      trayTitle={list.title}
+                                      cardId={card.id}
+                                      snapshot={snapshot}
+                                      userId={userId}
+                                      admin={admin}
+                                      favoritedBy={card.favoritedBy}
+                                      jiraInfo={jiraInfo}
+                                    />
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                            {admin ? (
+                              <AddButton
+                                trayId={list.id}
+                                userId={userId}
+                                admin={admin}
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        )}
+                      </Droppable>
                     </div>
-                    <Droppable droppableId={String(list.id)}>
-                      {provided => (
-                        <div
-                          key={list.id}
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
-                          {list.cards.map((card, index) => (
-                            <Draggable
-                              draggableId={String(card.id)}
-                              isDragDisabled={!admin}
-                              index={index}
-                              key={card.id}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  className={styles.card}
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <JCard
-                                    text={card.text}
-                                    key={card.id}
-                                    trayId={list.id}
-                                    trayTitle={list.title}
-                                    cardId={card.id}
-                                    snapshot={snapshot}
-                                    userId={userId}
-                                    admin={admin}
-                                    favoritedBy={card.favoritedBy}
-                                    jiraInfo={jiraInfo}
-                                  />
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                          {admin ? (
-                            <AddButton
-                              trayId={list.id}
-                              userId={userId}
-                              admin={admin}
-                            />
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-            {admin ? (
-              <AddButton pollId={pollId} userId={userId} admin={admin} list />
-            ) : (
-              ""
-            )}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+              {admin ? (
+                <AddButton pollId={pollId} userId={userId} admin={admin} list />
+              ) : (
+                ""
+              )}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+      {openTrayModal && (
+        <TrayModal
+          open={openTrayModal}
+          setOpen={setOpenTrayModal}
+          deleteTrayCallBack={deleteTray}
+          trayId={trayId}
+        />
+      )}
+    </div>
   );
 };
 
@@ -216,6 +235,8 @@ const updateSwapTrayCache = (client, data, fromIndex, toIndex, pollId) => {
 
 // React component
 export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
+  const [openTrayModal, setOpenTrayModal] = useState(false);
+  const [trayId, setTrayId] = useState(null);
   const [swapCards, {}] = useMutation(SWAP_CARD);
   const [deleteTrayHook, {}] = useMutation(DELETE_TRAY);
 
@@ -284,6 +305,10 @@ export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
     userId,
     pollId,
     deleteTray,
-    jiraInfo
+    jiraInfo,
+    openTrayModal,
+    setOpenTrayModal,
+    trayId,
+    setTrayId
   );
 };

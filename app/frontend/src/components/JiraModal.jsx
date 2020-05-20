@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./JiraModal.module.scss";
 import { useMutation } from "@apollo/react-hooks";
 import { SAVE_USER_JIRA_INFO } from "../graphql/mutations.graphql";
 import { GET_USER_POLLS } from "../graphql/queries.graphql";
 
-export default function JiraModal({ jiraInfo, userId }) {
+export default function JiraModal({
+  jiraInfo,
+  userId,
+  setOpenCallBack,
+  refButton
+}) {
   const [jiraDomain, setJiraDomain] = useState(
     jiraInfo ? jiraInfo.jiraDomain : ""
   );
@@ -14,6 +19,27 @@ export default function JiraModal({ jiraInfo, userId }) {
   const [jiraToken, setJiraToken] = useState(
     jiraInfo ? jiraInfo.jiraToken : ""
   );
+
+  const mod = useRef();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        mod.current &&
+        !mod.current.contains(event.target) &&
+        !refButton.current.contains(event.target)
+      ) {
+        setOpenCallBack(false);
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const [
     saveJiraInfoHook,
@@ -33,7 +59,7 @@ export default function JiraModal({ jiraInfo, userId }) {
   };
 
   return (
-    <div className={styles.jiraModal}>
+    <div ref={mod} className={styles.jiraModal}>
       <input
         placeholder="jira domain"
         value={jiraDomain}

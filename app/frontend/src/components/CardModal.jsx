@@ -18,7 +18,6 @@ export default function SimpleModal({
   const [open, setOpen] = useState(false);
   const [deleteCardHook, {}] = useMutation(DELETE_CARD);
   const [createJiraIssueHook, {}] = useMutation(CREATE_JIRA_ISSUE);
-  // const [modalX, setModalX] = useState(0);
   const handleOpen = e => {
     setOpen(true);
   };
