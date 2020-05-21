@@ -69,10 +69,10 @@
   position: absolute;
   z-index: 100;
   width: 100vw;
-  height: 100vh;
+  height: calc(100% - 463px);
   margin-top: 400px;
-  animation-name: slideSelectionDown;
-  animation-duration: 0.5s;
+  // animation-name: slideSelectionDown;
+  // animation-duration: 0.5s;
 }
 
 .closeButton {
@@ -80,10 +80,10 @@
 }
 
 .createModalContainer {
-  background-color: darkturquoise;
+  background-color: cadetblue;
   height: 400px;
   overflow: hidden;
-  animation: openContainer 0.5s;
+  // animation: openContainer 0.5s;
 }
 
 // --------------------------------------------
