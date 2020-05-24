@@ -157,3 +157,15 @@ mutation createJiraIssue ($cardText: String!, $projectKey: String!, $issueType: 
   }
 }
 `
+
+export const UPDATE_CARD = gql`
+mutation Updatecard ($trayId:String!, $cardId: String!, $text:String! ){
+  __typename
+  updateCard(trayId: $trayId, cardId: $cardId, text: $text) {
+    cards {
+      id
+      text
+    }
+  }
+}
+`

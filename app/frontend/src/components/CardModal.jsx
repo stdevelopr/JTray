@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "@material-ui/core/Modal";
 import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Backdrop from "@material-ui/core/Backdrop";
+import { Card } from "@material-ui/core";
+import TextareaAutosize from "react-textarea-autosize";
 import Fade from "@material-ui/core/Fade";
 import styles from "./CardModal.module.scss";
 import { useMutation } from "@apollo/react-hooks";
-import { DELETE_CARD, CREATE_JIRA_ISSUE } from "../graphql/mutations.graphql";
+import {
+  DELETE_CARD,
+  CREATE_JIRA_ISSUE,
+  UPDATE_CARD
+} from "../graphql/mutations.graphql";
 
 export default function SimpleModal({
   trayId,
@@ -16,8 +22,25 @@ export default function SimpleModal({
   jiraInfo
 }) {
   const [open, setOpen] = useState(false);
+  const [textEdit, setTextEdit] = useState(cardText);
   const [deleteCardHook, {}] = useMutation(DELETE_CARD);
+  const [updateCardHook, {}] = useMutation(UPDATE_CARD);
   const [createJiraIssueHook, {}] = useMutation(CREATE_JIRA_ISSUE);
+
+  useEffect(() => {}, [textEdit]);
+
+  const handleEdit = () => {
+    console.log("edit", trayId, cardId, textEdit);
+    updateCardHook({
+      variables: {
+        trayId: trayId,
+        cardId: cardId,
+        text: textEdit
+      }
+    });
+    handleClose();
+  };
+
   const handleOpen = e => {
     setOpen(true);
   };
@@ -71,7 +94,40 @@ export default function SimpleModal({
       >
         <Fade in={open}>
           <div className={styles.paper}>
-            <h2 id="transition-modal-title">Card Options</h2>
+            <div className={styles.editWrapper}>
+              <button className={styles.editButton} onClick={handleEdit}>
+                Save
+              </button>
+              <Card
+                className={styles.card}
+                style={{
+                  clear: "right",
+                  overflow: "visible",
+                  height: "85px",
+                  minWidth: "272px",
+                  padding: "6px 8px 2px"
+                }}
+              >
+                <TextareaAutosize
+                  autoFocus
+                  // onBlur={toggleForm}
+                  value={textEdit}
+                  onChange={t => setTextEdit(t.target.value)}
+                  style={{
+                    resize: "none",
+                    overflow: "hidden",
+                    minWidth: "272px",
+                    outline: "none",
+                    border: "none",
+                    position: "absolute",
+                    zIndex: 10
+                  }}
+                />
+              </Card>
+            </div>
+            <h2 id="transition-modal-title" style={{ textAlign: "center" }}>
+              Card Options
+            </h2>
             {jiraInfo && (
               <div>
                 <div>Export to JIRA</div>

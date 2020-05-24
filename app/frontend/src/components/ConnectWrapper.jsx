@@ -12,6 +12,7 @@ const cache = new InMemoryCache({
       case "Tray":
       case "AddCard":
       case "DeleteCard":
+      case "UpdateCard":
       case "AddTray":
       case "SwapCard":
       case "SwapTray":
