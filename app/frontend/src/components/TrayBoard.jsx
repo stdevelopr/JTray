@@ -28,7 +28,9 @@ const renderTrays = (
   openTrayModal,
   setOpenTrayModal,
   trayId,
-  setTrayId
+  setTrayId,
+  trayTitle,
+  setTrayTitle
 ) => {
   return (
     <div>
@@ -56,7 +58,12 @@ const renderTrays = (
                       {...provided.draggableProps}
                     >
                       <div className={admin ? styles.listTitle : null}>
-                        <h3 {...provided.dragHandleProps}>{list.title}</h3>
+                        <h3
+                          {...provided.dragHandleProps}
+                          className={styles.title}
+                        >
+                          {list.title}
+                        </h3>
                         {admin ? (
                           <IconButton
                             aria-label="settings"
@@ -64,6 +71,7 @@ const renderTrays = (
                             onClick={e => {
                               setOpenTrayModal(!openTrayModal);
                               setTrayId(list.id);
+                              setTrayTitle(list.title);
                             }}
                             className={styles.verticalIcon}
                           >
@@ -143,6 +151,7 @@ const renderTrays = (
           setOpen={setOpenTrayModal}
           deleteTrayCallBack={deleteTray}
           trayId={trayId}
+          trayTitle={trayTitle}
         />
       )}
     </div>
@@ -237,6 +246,7 @@ const updateSwapTrayCache = (client, data, fromIndex, toIndex, pollId) => {
 export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
   const [openTrayModal, setOpenTrayModal] = useState(false);
   const [trayId, setTrayId] = useState(null);
+  const [trayTitle, setTrayTitle] = useState(null);
   const [swapCards, {}] = useMutation(SWAP_CARD);
   const [deleteTrayHook, {}] = useMutation(DELETE_TRAY);
 
@@ -309,6 +319,8 @@ export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
     openTrayModal,
     setOpenTrayModal,
     trayId,
-    setTrayId
+    setTrayId,
+    trayTitle,
+    setTrayTitle
   );
 };

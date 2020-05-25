@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Modal from "@material-ui/core/Modal";
+import { Card } from "@material-ui/core";
+import TextareaAutosize from "react-textarea-autosize";
 import Fade from "@material-ui/core/Fade";
 import styles from "./TrayModal.module.scss";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -8,8 +10,13 @@ export default function TrayModal({
   open,
   setOpen,
   deleteTrayCallBack,
-  trayId
+  trayId,
+  trayTitle
 }) {
+  const [textEdit, setTextEdit] = useState(trayTitle);
+  const handleEdit = () => {
+    console.log("edit", textEdit);
+  };
   return (
     <div>
       {" "}
@@ -27,6 +34,37 @@ export default function TrayModal({
       >
         <Fade in={open}>
           <div className={styles.paper}>
+            <div className={styles.editWrapper}>
+              <button className={styles.editButton} onClick={handleEdit}>
+                Save
+              </button>
+              <Card
+                className={styles.card}
+                style={{
+                  clear: "right",
+                  overflow: "visible",
+                  height: "30px",
+                  minWidth: "272px",
+                  padding: "6px 8px 2px"
+                }}
+              >
+                <TextareaAutosize
+                  autoFocus
+                  // onBlur={toggleForm}
+                  value={textEdit}
+                  onChange={t => setTextEdit(t.target.value)}
+                  style={{
+                    resize: "none",
+                    overflow: "hidden",
+                    minWidth: "272px",
+                    outline: "none",
+                    border: "none",
+                    position: "absolute",
+                    zIndex: 10
+                  }}
+                />
+              </Card>
+            </div>
             <h2 id="transition-modal-title">Delete tray and all its cards?</h2>
 
             <div
