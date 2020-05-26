@@ -5,7 +5,7 @@ import TrayModal from "./TrayModal.jsx";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useQuery } from "@apollo/react-hooks";
 import { useMutation } from "@apollo/react-hooks";
-import { GET_TRAYS, GET_USER_INFO } from "../graphql/queries.graphql";
+import { GET_TRAYS } from "../graphql/queries.graphql";
 import {
   SWAP_CARD,
   SWAP_TRAY,
@@ -14,7 +14,7 @@ import {
 import { useApolloClient } from "@apollo/react-hooks";
 import styles from "./TrayBoard.module.scss";
 import IconButton from "@material-ui/core/IconButton";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 // function to render the board based on array of trays
 const renderTrays = (
@@ -75,7 +75,7 @@ const renderTrays = (
                             }}
                             className={styles.verticalIcon}
                           >
-                            <DeleteForeverIcon />
+                            <MoreHorizIcon />
                           </IconButton>
                         ) : (
                           ""

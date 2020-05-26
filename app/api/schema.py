@@ -223,7 +223,7 @@ class AddCard(graphene.Mutation):
 
 class UpdateCard(graphene.Mutation):
     """
-    Update and return the atualized tray: Tray(id, title, cards)
+    Update a card and return the atualized tray
     """
     class Arguments:
         trayId = graphene.String()
@@ -244,6 +244,30 @@ class UpdateCard(graphene.Mutation):
             return_document=ReturnDocument.AFTER, projection=['cards'])
 
         return newCards
+
+    
+class UpdateTray(graphene.Mutation):
+    """
+    Update the tray and return the atualized tray: Tray(id, title, cards)
+    """
+    class Arguments:
+        trayId = graphene.String()
+        text= graphene.String()
+    
+    _id = graphene.String(name='id')
+    title = graphene.String()
+    cards = graphene.List(Card)
+
+
+    def mutate(self, info, trayId, text):
+        query = {'_id':ObjectId(trayId)}
+        update= {'$set': {'title':text}}
+        # get the atualized tray after update
+        newTray = db.Trays.find_one_and_update(query, update, 
+            return_document=ReturnDocument.AFTER, projection=['id', 'title', 'cards'])
+
+        return Tray(**newTray)
+
 
 class DeleteCard(graphene.Mutation):
     """
@@ -445,5 +469,6 @@ class Mutation(graphene.ObjectType):
     setJiraInfo = SetJiraInfo.Field()
     createJiraIssue = CreateJiraIssue.Field()
     updateCard = UpdateCard.Field()
+    updateTray = UpdateTray.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

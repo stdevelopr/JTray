@@ -169,3 +169,17 @@ mutation Updatecard ($trayId:String!, $cardId: String!, $text:String! ){
   }
 }
 `
+
+export const UPDATE_TRAY = gql`
+mutation UpdateTray ($trayId:String!, $text:String! ){
+  __typename
+  updateTray(trayId: $trayId, text: $text) {
+    id
+    title
+    cards {
+      id
+      text
+    }
+  }
+}
+`

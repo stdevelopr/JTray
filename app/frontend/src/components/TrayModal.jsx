@@ -5,6 +5,8 @@ import TextareaAutosize from "react-textarea-autosize";
 import Fade from "@material-ui/core/Fade";
 import styles from "./TrayModal.module.scss";
 import Backdrop from "@material-ui/core/Backdrop";
+import { useMutation } from "@apollo/react-hooks";
+import { UPDATE_TRAY } from "../graphql/mutations.graphql";
 
 export default function TrayModal({
   open,
@@ -14,9 +16,17 @@ export default function TrayModal({
   trayTitle
 }) {
   const [textEdit, setTextEdit] = useState(trayTitle);
+  const [updateTrayHook, {}] = useMutation(UPDATE_TRAY);
   const handleEdit = () => {
-    console.log("edit", textEdit);
+    updateTrayHook({
+      variables: {
+        trayId: trayId,
+        text: textEdit
+      }
+    });
+    setOpen(false);
   };
+
   return (
     <div>
       {" "}
