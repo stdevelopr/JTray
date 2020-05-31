@@ -183,3 +183,12 @@ mutation UpdateTray ($trayId:String!, $text:String! ){
   }
 }
 `
+
+export const UPDATE_POLL = gql`
+mutation UpdatePoll ($pollId:String!, $pollTitle:String!, $annotations:String! ){
+  __typename
+  updatePoll(pollId: $pollId, pollTitle:$pollTitle, annotations:$annotations) {
+      id
+    }
+  }
+`

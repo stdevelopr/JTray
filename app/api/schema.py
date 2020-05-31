@@ -145,6 +145,29 @@ class DeletePoll(graphene.Mutation):
         db["Trays"].delete_many({'pollId': pollId})
         return "ok"
 
+class UpdatePoll(graphene.Mutation):
+    """
+    Update the tray and return the atualized tray: Tray(id, title, cards)
+    """
+    class Arguments:
+        pollId = graphene.String()
+        pollTitle = graphene.String()
+        annotations = graphene.String()
+    
+    _id = graphene.String(name='id')
+    title = graphene.String()
+    cards = graphene.List(Card)
+
+
+    def mutate(self, info, pollId, pollTitle, annotations):
+        query = {'_id':ObjectId(pollId)}
+        update= {'$set': {'title':pollTitle, 'annotations':annotations}}
+        # get the atualized tray after update
+        newTray = db.Polls.find_one_and_update(query, update)
+            # return_document=ReturnDocument.AFTER, projection=['id', 'title', 'cards'])
+
+        return newTray
+
 class AddTray(graphene.Mutation):
     """
     Create and return a new empty tray: Tray(id, title, cards:[])
@@ -470,5 +493,6 @@ class Mutation(graphene.ObjectType):
     createJiraIssue = CreateJiraIssue.Field()
     updateCard = UpdateCard.Field()
     updateTray = UpdateTray.Field()
+    updatePoll = UpdatePoll.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

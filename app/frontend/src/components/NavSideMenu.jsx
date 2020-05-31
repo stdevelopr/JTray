@@ -3,13 +3,14 @@ import styles from "./NavSideMenu.module.scss";
 import { withApollo } from "@apollo/react-hoc";
 import { GET_MAIN_POLL } from "../graphql/queries.graphql";
 import JiraModal from "./JiraModal.jsx";
+import PollModal from "./PollModal.jsx";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { useMutation } from "@apollo/react-hooks";
 import { DELETE_POLL } from "../graphql/mutations.graphql";
 import { GET_USER_POLLS, GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 import SettingsIcon from "@material-ui/icons/Settings";
-// import MoreVertIcon from "@material-ui/icons/MoreVert";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 const NavSideMenu = ({
   polls,
@@ -23,17 +24,21 @@ const NavSideMenu = ({
   client
 }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openPollModal, setOpenPollModal] = useState(false);
+  const [modalPollId, setModalPollId] = useState("");
+  const [modalPollTitle, setModalPollTitle] = useState("");
+  const [modalPollDescription, setModalPollDescription] = useState("");
   const [openItemModalId, setOpenItemModalId] = useState(null);
   const [openJiraConfigModal, setOpenJiraConfigModal] = useState(false);
 
-  const [deletePollHook, {}] = useMutation(DELETE_POLL);
+  // const [deletePollHook, {}] = useMutation(DELETE_POLL);
 
-  const handleOpen = e => {
-    setOpenItemModalId(e.target.closest("button").getAttribute("pollid"));
-    openItemModalId == e.target.closest("button").getAttribute("pollid")
-      ? setOpenItemModalId(null)
-      : null;
-  };
+  // const handleOpen = e => {
+  //   setOpenItemModalId(e.target.closest("button").getAttribute("pollid"));
+  //   openItemModalId == e.target.closest("button").getAttribute("pollid")
+  //     ? setOpenItemModalId(null)
+  //     : null;
+  // };
 
   const setMainPoll = (
     pollId,
@@ -52,18 +57,6 @@ const NavSideMenu = ({
     client.writeQuery({
       query: GET_MAIN_POLL,
       data: { mainPoll: mainPoll }
-    });
-  };
-
-  const deletePollId = (pollId, userId) => {
-    deletePollHook({
-      variables: {
-        pollId: pollId
-      },
-      refetchQueries: [
-        { query: GET_USER_POLLS, variables: { userId: userId } },
-        { query: GET_PUBLIC_POLLS }
-      ]
     });
   };
 
@@ -150,25 +143,17 @@ const NavSideMenu = ({
                   <IconButton
                     aria-label="settings"
                     pollid={poll.id}
-                    onClick={handleOpen}
+                    onClick={() => {
+                      setModalPollId(poll.id);
+                      setModalPollTitle(poll.title);
+                      setModalPollDescription(poll.annotations);
+                      setOpenPollModal(true);
+                    }}
                     className={styles.verticalIcon}
                   >
-                    <DeleteForeverIcon />
+                    <MoreVertIcon />
                   </IconButton>
                 </div>
-                {openItemModalId == poll.id ? (
-                  <div className={styles.itemPollDelete}>
-                    <div>Delete {poll.title}</div>
-                    <button onClick={() => deletePollId(poll.id, userId)}>
-                      Yes
-                    </button>
-                    <button onClick={() => setOpenItemModalId(null)}>
-                      Cancel
-                    </button>
-                  </div>
-                ) : (
-                  ""
-                )}
               </div>
             );
           })}
@@ -189,6 +174,16 @@ const NavSideMenu = ({
           {children}
         </div>
       </div>
+      {openPollModal && (
+        <PollModal
+          open={openPollModal}
+          setOpen={setOpenPollModal}
+          pollId={modalPollId}
+          pollTitle={modalPollTitle}
+          pollDescription={modalPollDescription}
+          userId={userId}
+        />
+      )}
     </div>
   );
 };
