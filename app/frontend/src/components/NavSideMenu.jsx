@@ -28,6 +28,7 @@ const NavSideMenu = ({
   const [modalPollId, setModalPollId] = useState("");
   const [modalPollTitle, setModalPollTitle] = useState("");
   const [modalPollDescription, setModalPollDescription] = useState("");
+  const [modalPollVisibility, setModalPollVisibility] = useState("");
   const [openItemModalId, setOpenItemModalId] = useState(null);
   const [openJiraConfigModal, setOpenJiraConfigModal] = useState(false);
 
@@ -147,6 +148,7 @@ const NavSideMenu = ({
                       setModalPollId(poll.id);
                       setModalPollTitle(poll.title);
                       setModalPollDescription(poll.annotations);
+                      setModalPollVisibility(poll.visibility);
                       setOpenPollModal(true);
                     }}
                     className={styles.verticalIcon}
@@ -181,6 +183,7 @@ const NavSideMenu = ({
           pollId={modalPollId}
           pollTitle={modalPollTitle}
           pollDescription={modalPollDescription}
+          pollVisibility={modalPollVisibility}
           userId={userId}
         />
       )}

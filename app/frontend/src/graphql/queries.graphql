@@ -45,6 +45,8 @@ export const GET_MAIN_POLL = gql `
       title
       createdByUserId
       annotations
+      visibility
+
     }
     id
     jiraInfo{

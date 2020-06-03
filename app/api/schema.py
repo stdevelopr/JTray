@@ -35,6 +35,7 @@ class Poll(graphene.ObjectType):
     title = graphene.String()
     createdByUserId = graphene.String()
     annotations = graphene.String()
+    visibility = graphene.String()
 
 class JiraIssueType(graphene.ObjectType):
     name =  graphene.String()
@@ -86,7 +87,7 @@ class Query(graphene.ObjectType):
         jiraInfo = db.Users.find_one({"userId": userId})
         polls = db.Polls.find({"createdByUserId": userId}).sort("_id",-1)
 
-        return User(_id= userId, polls=list (polls), jiraInfo=jiraInfo)
+        return User(_id= userId, polls=list(polls), jiraInfo=jiraInfo)
 
     # def resolve_jiraProjects(self, info, userId):
     #     user_info = db.Users.find_one({"userId":userId})
@@ -153,15 +154,16 @@ class UpdatePoll(graphene.Mutation):
         pollId = graphene.String()
         pollTitle = graphene.String()
         annotations = graphene.String()
+        visibility = graphene.String()
     
     _id = graphene.String(name='id')
     title = graphene.String()
     cards = graphene.List(Card)
 
 
-    def mutate(self, info, pollId, pollTitle, annotations):
+    def mutate(self, info, pollId, pollTitle, annotations, visibility):
         query = {'_id':ObjectId(pollId)}
-        update= {'$set': {'title':pollTitle, 'annotations':annotations}}
+        update= {'$set': {'title':pollTitle, 'annotations':annotations, 'visibility': visibility}}
         # get the atualized tray after update
         newTray = db.Polls.find_one_and_update(query, update)
             # return_document=ReturnDocument.AFTER, projection=['id', 'title', 'cards'])

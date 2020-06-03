@@ -5,7 +5,13 @@ import { GET_USER_POLLS, GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 import { Card } from "@material-ui/core";
 import TextareaAutosize from "react-textarea-autosize";
 import Fade from "@material-ui/core/Fade";
-import styles from "./TrayModal.module.scss";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import TextField from "@material-ui/core/TextField";
+import styles from "./PollModal.module.scss";
 import Backdrop from "@material-ui/core/Backdrop";
 import { useMutation } from "@apollo/react-hooks";
 import { UPDATE_POLL } from "../graphql/mutations.graphql";
@@ -16,10 +22,12 @@ export default function PollModal({
   userId,
   pollId,
   pollTitle,
-  pollDescription
+  pollDescription,
+  pollVisibility
 }) {
   const [titleEdit, setTitleEdit] = useState(pollTitle);
   const [descriptionEdit, setDescriptionEdit] = useState(pollDescription);
+  const [visibilityEdit, setVisibilityEdit] = useState(pollVisibility);
   const [deletePollHook, {}] = useMutation(DELETE_POLL);
   const [updatePollHook, {}] = useMutation(UPDATE_POLL);
 
@@ -28,7 +36,8 @@ export default function PollModal({
       variables: {
         pollId: pollId,
         pollTitle: titleEdit,
-        annotations: descriptionEdit
+        annotations: descriptionEdit,
+        visibility: visibilityEdit
       },
       refetchQueries: [
         { query: GET_USER_POLLS, variables: { userId: userId } },
@@ -68,9 +77,6 @@ export default function PollModal({
         <Fade in={open}>
           <div className={styles.paper}>
             <div className={styles.editWrapper}>
-              <button className={styles.editButton} onClick={handleEdit}>
-                Save
-              </button>
               <div>Title</div>
               <Card
                 className={styles.card}
@@ -126,8 +132,49 @@ export default function PollModal({
                   }}
                 />
               </Card>
+              <div className={styles.visibility}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Visibility</FormLabel>
+                  <RadioGroup
+                    aria-label="gender"
+                    name="gender1"
+                    value={visibilityEdit}
+                    onChange={e => setVisibilityEdit(e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="public"
+                      control={<Radio />}
+                      label="Open Public"
+                    />
+                    <div>
+                      <FormControlLabel
+                        value="password"
+                        control={<Radio />}
+                        label="Public with password"
+                      />
+                      <TextField
+                        // style={{ verticalAlign: "baseline" }}
+                        id="standard-password-input"
+                        label="Password"
+                        type="password"
+                        autoComplete="current-password"
+                      />
+                    </div>
+                    <FormControlLabel
+                      value="private"
+                      control={<Radio />}
+                      label="Private"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div className={styles.saveWrapper}>
+                <button className={styles.editButton} onClick={handleEdit}>
+                  Save
+                </button>
+              </div>
             </div>
-            <h2 id="transition-modal-title">
+            <h2 id="transition-modal-title" className={styles.deleteText}>
               Delete Poll and all its content?
             </h2>
 

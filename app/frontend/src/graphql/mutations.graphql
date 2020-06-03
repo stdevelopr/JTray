@@ -185,9 +185,9 @@ mutation UpdateTray ($trayId:String!, $text:String! ){
 `
 
 export const UPDATE_POLL = gql`
-mutation UpdatePoll ($pollId:String!, $pollTitle:String!, $annotations:String! ){
+mutation UpdatePoll ($pollId:String!, $pollTitle:String!, $annotations:String!, $visibility: String! ){
   __typename
-  updatePoll(pollId: $pollId, pollTitle:$pollTitle, annotations:$annotations) {
+  updatePoll(pollId: $pollId, pollTitle:$pollTitle, annotations:$annotations, visibility: $visibility) {
       id
     }
   }
