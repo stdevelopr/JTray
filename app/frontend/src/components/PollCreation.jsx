@@ -99,9 +99,9 @@ function PollCreation({ userId, closeCallBack, animationClass, client }) {
             <FormControlLabel
               value="public"
               control={<Radio />}
-              label="Open Public"
+              label="Public"
             />
-            <div>
+            {/* <div>
               <FormControlLabel
                 value="password"
                 control={<Radio />}
@@ -114,7 +114,7 @@ function PollCreation({ userId, closeCallBack, animationClass, client }) {
                 type="password"
                 autoComplete="current-password"
               />
-            </div>
+            </div> */}
             <FormControlLabel
               value="private"
               control={<Radio />}

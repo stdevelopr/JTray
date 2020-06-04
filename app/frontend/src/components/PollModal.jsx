@@ -76,8 +76,11 @@ export default function PollModal({
       >
         <Fade in={open}>
           <div className={styles.paper}>
+            <div className={styles.pollTitle}>
+              <h3>{pollTitle}</h3>
+            </div>
             <div className={styles.editWrapper}>
-              <div>Title</div>
+              <FormLabel component="legend">Title</FormLabel>
               <Card
                 className={styles.card}
                 style={{
@@ -104,13 +107,15 @@ export default function PollModal({
                   }}
                 />
               </Card>
-              <div>Description</div>
+              <FormLabel component="legend" className={styles.description}>
+                Description
+              </FormLabel>
+              {/* <div className={styles.description}>Description</div> */}
               <Card
                 className={styles.card}
                 style={{
                   clear: "right",
                   overflow: "visible",
-                  marginTop: "5px",
                   height: "30px",
                   minWidth: "272px",
                   padding: "6px 8px 2px"
@@ -144,9 +149,9 @@ export default function PollModal({
                     <FormControlLabel
                       value="public"
                       control={<Radio />}
-                      label="Open Public"
+                      label="Public"
                     />
-                    <div>
+                    {/* <div>
                       <FormControlLabel
                         value="password"
                         control={<Radio />}
@@ -159,7 +164,7 @@ export default function PollModal({
                         type="password"
                         autoComplete="current-password"
                       />
-                    </div>
+                    </div> */}
                     <FormControlLabel
                       value="private"
                       control={<Radio />}
@@ -174,18 +179,20 @@ export default function PollModal({
                 </button>
               </div>
             </div>
-            <h2 id="transition-modal-title" className={styles.deleteText}>
-              Delete Poll and all its content?
-            </h2>
+            <div className={styles.deleteSection}>
+              <h3 id="transition-modal-title" className={styles.deleteText}>
+                Delete Poll and all its contents?
+              </h3>
 
-            <div
-              onClick={() => {
-                deletePoll();
-                setOpen(false);
-              }}
-              className={styles.deleteItem}
-            >
-              Delete Poll
+              <button
+                onClick={() => {
+                  deletePoll();
+                  setOpen(false);
+                }}
+                className={styles.deleteButton}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </Fade>
