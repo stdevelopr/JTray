@@ -6,6 +6,7 @@ import { useMutation } from "@apollo/react-hooks";
 import StarRateIcon from "@material-ui/icons/StarRate";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import TextareaAutosize from "react-textarea-autosize";
 import CardModal from "./CardModal.jsx";
 import styles from "./JCard.module.scss";
 import { SET_CARD_FAVORITE } from "../graphql/mutations.graphql";
@@ -19,7 +20,8 @@ export const JCard = ({
   favoritedBy,
   userId,
   admin,
-  jiraInfo
+  jiraInfo,
+  visibility
 }) => {
   const [open, setOpen] = React.useState(false);
   const [favorite, setFavorite] = React.useState(favoritedBy.includes(userId));
@@ -39,7 +41,12 @@ export const JCard = ({
     <div>
       <Card className={snapshot.isDragging ? styles.move : styles.static}>
         <CardHeader
-          avatar={<Avatar>{admin ? countFavorite : "R"}</Avatar>}
+          style={{ paddingBottom: "0px" }}
+          avatar={
+            visibility == "public" && (
+              <Avatar>{admin ? countFavorite : "R"}</Avatar>
+            )
+          }
           action={
             admin ? (
               <CardModal
@@ -60,11 +67,18 @@ export const JCard = ({
           }
         />
 
-        <CardContent>
-          <Typography color="textSecondary" gutterBottom>
-            {text}
-          </Typography>
-        </CardContent>
+        <TextareaAutosize
+          value={text}
+          style={{
+            resize: "none",
+            overflow: "hidden",
+            minWidth: "272px",
+            outline: "none",
+            border: "none",
+            margin: "10px",
+            caretColor: "transparent"
+          }}
+        />
       </Card>
     </div>
   );

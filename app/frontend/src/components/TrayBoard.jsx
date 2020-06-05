@@ -113,6 +113,7 @@ const renderTrays = (
                                       admin={admin}
                                       favoritedBy={card.favoritedBy}
                                       jiraInfo={jiraInfo}
+                                      visibility={list.visibility}
                                     />
                                   </div>
                                 )}
@@ -306,7 +307,7 @@ export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
     console.log(error);
     return "error :(";
   }
-  // const trays = data.pollTrays;
+  console.log("DATA", data.pollTrays);
 
   return renderTrays(
     data.pollTrays,

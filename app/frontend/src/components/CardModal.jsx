@@ -30,7 +30,6 @@ export default function SimpleModal({
   useEffect(() => {}, [textEdit]);
 
   const handleEdit = () => {
-    console.log("edit", trayId, cardId, textEdit);
     updateCardHook({
       variables: {
         trayId: trayId,
@@ -103,13 +102,13 @@ export default function SimpleModal({
                 style={{
                   clear: "right",
                   overflow: "visible",
-                  height: "85px",
                   minWidth: "272px",
                   padding: "6px 8px 2px"
                 }}
               >
                 <TextareaAutosize
                   autoFocus
+                  spellcheck="false"
                   // onBlur={toggleForm}
                   value={textEdit}
                   onChange={t => setTextEdit(t.target.value)}
@@ -118,9 +117,7 @@ export default function SimpleModal({
                     overflow: "hidden",
                     minWidth: "272px",
                     outline: "none",
-                    border: "none",
-                    position: "absolute",
-                    zIndex: 10
+                    border: "none"
                   }}
                 />
               </Card>
