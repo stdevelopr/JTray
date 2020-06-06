@@ -60,11 +60,11 @@ const renderTrays = (
                       <div className={admin ? styles.listTitle : null}>
                         <h3
                           {...provided.dragHandleProps}
-                          className={styles.title}
+                          className={styles.hoverTray}
                         >
                           {list.title}
                         </h3>
-                        {admin ? (
+                        {admin && (
                           <IconButton
                             aria-label="settings"
                             // onClick={e => deleteTray(list.id)}
@@ -77,8 +77,6 @@ const renderTrays = (
                           >
                             <MoreHorizIcon />
                           </IconButton>
-                        ) : (
-                          ""
                         )}
                       </div>
                       <Droppable droppableId={String(list.id)}>

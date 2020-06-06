@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Modal from "@material-ui/core/Modal";
 import { Card } from "@material-ui/core";
 import TextareaAutosize from "react-textarea-autosize";
+import FormLabel from "@material-ui/core/FormLabel";
 import Fade from "@material-ui/core/Fade";
 import styles from "./TrayModal.module.scss";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -45,15 +46,13 @@ export default function TrayModal({
         <Fade in={open}>
           <div className={styles.paper}>
             <div className={styles.editWrapper}>
-              <button className={styles.editButton} onClick={handleEdit}>
-                Save
-              </button>
+              <h1 style={{ textAlign: "center" }}>{trayTitle}</h1>
+              <FormLabel component="legend">Title</FormLabel>
               <Card
                 className={styles.card}
                 style={{
                   clear: "right",
                   overflow: "visible",
-                  height: "30px",
                   minWidth: "272px",
                   padding: "6px 8px 2px"
                 }}
@@ -68,23 +67,30 @@ export default function TrayModal({
                     overflow: "hidden",
                     minWidth: "272px",
                     outline: "none",
-                    border: "none",
-                    position: "absolute",
-                    zIndex: 10
+                    border: "none"
                   }}
                 />
               </Card>
             </div>
-            <h2 id="transition-modal-title">Delete tray and all its cards?</h2>
-
-            <div
-              onClick={() => {
-                deleteTrayCallBack(trayId);
-                setOpen(false);
-              }}
-              className={styles.deleteItem}
-            >
+            <div style={{ margin: "20px", textAlign: "center" }}>
+              <button className={styles.editButton} onClick={handleEdit}>
+                Save
+              </button>
+            </div>
+            <h2 id="transition-modal-title" style={{ textAlign: "center" }}>
               Delete
+            </h2>
+            <span>Delete tray and all its cards?</span>
+            <div style={{ textAlign: "center" }}>
+              <button
+                onClick={() => {
+                  deleteTrayCallBack(trayId);
+                  setOpen(false);
+                }}
+                className={styles.deleteButton}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </Fade>

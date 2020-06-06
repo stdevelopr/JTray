@@ -16,11 +16,6 @@ h3 {
   }
 }
 
-.listTitle {
-  :hover {
-    background-color: rgb(233, 233, 178);
-  }
-}
 .move {
   @include trayColor(rgb(233, 233, 178));
   .listTitle {
@@ -48,6 +43,6 @@ h3 {
   right: 0px;
 }
 
-.title {
-  max-width: 200px;
+.hoverTray:hover {
+  background-color: rgb(233, 233, 178);
 }
