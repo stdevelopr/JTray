@@ -69,6 +69,7 @@ export const JCard = ({
 
         <TextareaAutosize
           value={text}
+          spellCheck="false"
           style={{
             resize: "none",
             overflow: "hidden",

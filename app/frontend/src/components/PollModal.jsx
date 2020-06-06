@@ -77,7 +77,7 @@ export default function PollModal({
         <Fade in={open}>
           <div className={styles.paper}>
             <div className={styles.pollTitle}>
-              <h3>{pollTitle}</h3>
+              <h1>{pollTitle}</h1>
             </div>
             <div className={styles.editWrapper}>
               <FormLabel component="legend">Title</FormLabel>
@@ -86,7 +86,6 @@ export default function PollModal({
                 style={{
                   clear: "right",
                   overflow: "visible",
-                  height: "30px",
                   minWidth: "272px",
                   padding: "6px 8px 2px"
                 }}
@@ -101,9 +100,7 @@ export default function PollModal({
                     overflow: "hidden",
                     minWidth: "272px",
                     outline: "none",
-                    border: "none",
-                    position: "absolute",
-                    zIndex: 10
+                    border: "none"
                   }}
                 />
               </Card>
@@ -116,7 +113,6 @@ export default function PollModal({
                 style={{
                   clear: "right",
                   overflow: "visible",
-                  height: "30px",
                   minWidth: "272px",
                   padding: "6px 8px 2px"
                 }}
@@ -131,9 +127,7 @@ export default function PollModal({
                     overflow: "hidden",
                     minWidth: "272px",
                     outline: "none",
-                    border: "none",
-                    position: "absolute",
-                    zIndex: 10
+                    border: "none"
                   }}
                 />
               </Card>
@@ -179,10 +173,15 @@ export default function PollModal({
                 </button>
               </div>
             </div>
+            <hr className={styles.horizontalLine} />
+            <h2 id="transition-modal-title" style={{ textAlign: "center" }}>
+              Delete
+            </h2>
+            <span>Delete poll and all its contents?</span>
             <div className={styles.deleteSection}>
-              <h3 id="transition-modal-title" className={styles.deleteText}>
+              {/* <h3 id="transition-modal-title" className={styles.deleteText}>
                 Delete Poll and all its contents?
-              </h3>
+              </h3> */}
 
               <button
                 onClick={() => {

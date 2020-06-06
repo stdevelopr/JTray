@@ -307,7 +307,6 @@ export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
     console.log(error);
     return "error :(";
   }
-  console.log("DATA", data.pollTrays);
 
   return renderTrays(
     data.pollTrays,

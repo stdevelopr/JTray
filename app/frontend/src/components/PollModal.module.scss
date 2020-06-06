@@ -6,7 +6,7 @@
 
 .paper {
   color: black;
-  background-color: whitesmoke;
+  background-color: white;
   border-radius: 20px;
   box-shadow: blue;
   padding: 30px;
@@ -15,7 +15,8 @@
 
 .pollTitle {
   text-align: center;
-  text-decoration: underline;
+  margin: 20px;
+  // text-decoration: underline;
 }
 
 .description {
@@ -72,7 +73,7 @@
 
 .deleteSection {
   text-align: center;
-  background-color: gainsboro;
+  // background-color: gainsboro;
   padding: 20px;
 }
 
@@ -87,7 +88,7 @@
   color: #ffffff;
   font-family: Arial;
   font-weight: bold;
-  padding: 6px 20px;
+  padding: 6px 24px;
   text-decoration: none;
   text-shadow: 0px 1px 0px #b23e35;
 }
@@ -98,4 +99,10 @@
 .deleteButton:active {
   position: relative;
   top: 1px;
+}
+
+.horizontalLine {
+  height: 2px;
+  background-color: black;
+  margin: 20px;
 }

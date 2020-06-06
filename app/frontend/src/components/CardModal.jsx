@@ -8,6 +8,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import Fade from "@material-ui/core/Fade";
 import styles from "./CardModal.module.scss";
 import { useMutation } from "@apollo/react-hooks";
+import FormLabel from "@material-ui/core/FormLabel";
 import {
   DELETE_CARD,
   CREATE_JIRA_ISSUE,
@@ -93,10 +94,10 @@ export default function SimpleModal({
       >
         <Fade in={open}>
           <div className={styles.paper}>
+            <FormLabel component="legend" style={{ margin: "10px" }}>
+              Card Text
+            </FormLabel>
             <div className={styles.editWrapper}>
-              <button className={styles.editButton} onClick={handleEdit}>
-                Save
-              </button>
               <Card
                 className={styles.card}
                 style={{
@@ -108,7 +109,7 @@ export default function SimpleModal({
               >
                 <TextareaAutosize
                   autoFocus
-                  spellcheck="false"
+                  spellCheck="false"
                   // onBlur={toggleForm}
                   value={textEdit}
                   onChange={t => setTextEdit(t.target.value)}
@@ -122,12 +123,18 @@ export default function SimpleModal({
                 />
               </Card>
             </div>
+            <div className={styles.editWrapper}>
+              <button className={styles.editButton} onClick={handleEdit}>
+                Save
+              </button>
+            </div>
+            <hr className={styles.horizontalLine} />
             <h2 id="transition-modal-title" style={{ textAlign: "center" }}>
-              Card Options
+              Export to JIRA
             </h2>
+            <span>Click on the project to export:</span>
             {jiraInfo && (
               <div>
-                <div>Export to JIRA</div>
                 {jiraInfo.jiraProjects.map(item => (
                   <div
                     key={item.name}
@@ -139,11 +146,17 @@ export default function SimpleModal({
                 ))}
               </div>
             )}
-            <div
-              onClick={() => deleteCard(trayId, cardId)}
-              className={styles.deleteItem}
-            >
-              Delete
+            <hr className={styles.horizontalLine} />
+            <h2 id="transition-modal-title" style={{ textAlign: "center" }}>
+              Delete Card
+            </h2>
+            <div className={styles.deleteWrapper}>
+              <button
+                onClick={() => deleteCard(trayId, cardId)}
+                className={styles.deleteButton}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </Fade>
