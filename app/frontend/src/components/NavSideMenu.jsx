@@ -33,15 +33,6 @@ const NavSideMenu = ({
   const [openItemModalId, setOpenItemModalId] = useState(null);
   const [openJiraConfigModal, setOpenJiraConfigModal] = useState(false);
 
-  // const [deletePollHook, {}] = useMutation(DELETE_POLL);
-
-  // const handleOpen = e => {
-  //   setOpenItemModalId(e.target.closest("button").getAttribute("pollid"));
-  //   openItemModalId == e.target.closest("button").getAttribute("pollid")
-  //     ? setOpenItemModalId(null)
-  //     : null;
-  // };
-
   const setMainPoll = (
     pollId,
     pollTitle,
@@ -78,17 +69,16 @@ const NavSideMenu = ({
             }}
           >
             <PersonIcon style={{ color: "white" }} />
-            {/* <svg width="30" height="30">
-              <path d="M0,5 30,5" stroke="#fff" strokeWidth="3" />
-              <path d="M0,14 30,14" stroke="#fff" strokeWidth="3" />
-              <path d="M0,23 30,23" stroke="#fff" strokeWidth="3" />
-            </svg> */}
-            <div className={styles.myPollsText}>My polls</div>
+            <div className={styles.myPollsText}>My Polls</div>
           </a>
         </span>
         <div className={styles.logo}>
-          <h1 className={styles.title}>{pollTitle}</h1>
-          <div>{annotations}</div>
+          <div style={{ textAlign: "center" }}>
+            <span className={styles.title}>{pollTitle}</span>
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <span className={styles.annotations}>{annotations}</span>
+          </div>
         </div>
         <div className={styles.jiraIcon}>
           Jira

@@ -53,23 +53,23 @@ function PollCreation({ userId, closeCallBack, animationClass, client }) {
   //
   return (
     <div
-      className={animationClass}
+      // className={animationClass}
       style={{
-        display: "grid",
-        gridTemplateColumns: "50% 50%",
-        backgroundColor: "aliceblue",
-        border: "solid",
-        padding: "5em",
-        paddingTop: "30px",
-        width: "1000px",
-        margin: "auto"
+        // display: "grid",
+        // gridTemplateColumns: "50% 50%",
+        backgroundColor: "whitesmoke",
+        border: "solid 5px #3d6ad6",
+        padding: "20px 50px 30px 50px",
+        position: "relative"
+        // width: "1000px",
+        // margin: "auto"
       }}
     >
       {/* <h1>POLL CREATION</h1> */}
-      <div style={{ display: "grid" }}>
+      <div style={{ textAlign: "left" }}>
         <div>
           <TextField
-            // style={{ verticalAlign: "baseline" }}
+            style={{ width: "300px" }}
             id="standard-password-inp"
             label="Poll Name"
             value={pollTitle}
@@ -79,15 +79,15 @@ function PollCreation({ userId, closeCallBack, animationClass, client }) {
           />
         </div>
         <TextareaAutosize
-          style={{ margin: "50px" }}
+          style={{ width: "300px" }}
           aria-label="minimum height"
-          rowsMin={3}
+          rowsMin={2}
           onChange={e => setPollAnnotations(e.target.value)}
           value={pollAnnotations}
           placeholder="Annotations"
         />
       </div>
-      <div>
+      <div style={{ textAlign: "left", marginTop: "10px" }}>
         <FormControl component="fieldset">
           <FormLabel component="legend">Visibility</FormLabel>
           <RadioGroup
@@ -123,9 +123,11 @@ function PollCreation({ userId, closeCallBack, animationClass, client }) {
           </RadioGroup>
         </FormControl>
       </div>
-      <Button variant="contained" color="primary" onClick={addPoll}>
-        CREATE
-      </Button>
+      <div style={{ textAlign: "center" }}>
+        <Button variant="contained" color="primary" onClick={addPoll}>
+          CREATE
+        </Button>
+      </div>
     </div>
   );
 }

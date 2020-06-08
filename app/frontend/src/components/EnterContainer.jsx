@@ -2,6 +2,8 @@ import React from "react";
 import jwt_decode from "jwt-decode";
 import { useQuery } from "@apollo/react-hooks";
 import PollActionContainer from "./PollActionContainer.jsx";
+import PollSelection from "./PollSelection.jsx";
+import PollCreation from "./PollCreation.jsx";
 import Jtray from "./Jtray.jsx";
 import {
   GET_USER_POLLS,
@@ -24,14 +26,20 @@ const Enter = ({ userInfo, mainPoll, polls }) => {
   ) : (
     <div
       style={{
-        backgroundColor: "darkturquoise",
+        backgroundColor: "#3d6ad6",
         height: "100vh",
         textAlign: "center"
       }}
     >
       <h2 style={{ color: "white" }}>You have no polls yet... </h2>
       <h2 style={{ color: "white" }}>Create or select one.</h2>
-      <PollActionContainer userInfo={userInfo} select create />
+      <div style={{ width: "400px", display: "inline-block" }}>
+        <PollCreation userInfo={userInfo} />
+      </div>
+      <div>
+        <PollSelection userInfo={userInfo} />
+      </div>
+      {/* <PollActionContainer userInfo={userInfo} select create /> */}
     </div>
   );
   return firstScreen;
@@ -57,7 +65,7 @@ const EnterContainer = ({ token }) => {
 
   const { data: main } = useQuery(GET_MAIN_POLL, {});
 
-  if (loadingUser || loadingPolls) return "LOADING....";
+  if (loadingUser || loadingPolls) return "Loading...";
 
   const userInfo = userData.getUser;
 

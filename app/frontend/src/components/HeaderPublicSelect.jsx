@@ -62,7 +62,7 @@ export default function HeaderPublicSelect({ userInfo }) {
           }}
         >
           <Fade in={openSelectModal}>
-            <div style={{ minHeight: "100%" }}>
+            <div style={{ minHeight: "100%", paddingLeft: "60px" }}>
               <PollSelection
                 userId={userInfo.id}
                 closeCallback={() => setOpenSelectModal(false)}
@@ -73,7 +73,7 @@ export default function HeaderPublicSelect({ userInfo }) {
                   fontSize: "40px",
                   position: "fixed",
                   top: "10px",
-                  right: "50px",
+                  left: "30px",
                   color: "white"
                 }}
               >
