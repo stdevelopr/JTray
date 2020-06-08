@@ -11,6 +11,7 @@ import { DELETE_POLL } from "../graphql/mutations.graphql";
 import { GET_USER_POLLS, GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import PersonIcon from "@material-ui/icons/Person";
 
 const NavSideMenu = ({
   polls,
@@ -76,12 +77,13 @@ const NavSideMenu = ({
               setOpenItemModalId(null);
             }}
           >
-            <svg width="30" height="30">
+            <PersonIcon style={{ color: "white" }} />
+            {/* <svg width="30" height="30">
               <path d="M0,5 30,5" stroke="#fff" strokeWidth="3" />
               <path d="M0,14 30,14" stroke="#fff" strokeWidth="3" />
               <path d="M0,23 30,23" stroke="#fff" strokeWidth="3" />
-            </svg>
-            <h3 className={styles.myPollsText}>Private</h3>
+            </svg> */}
+            <div className={styles.myPollsText}>My polls</div>
           </a>
         </span>
         <div className={styles.logo}>
@@ -95,7 +97,7 @@ const NavSideMenu = ({
             aria-label="settings"
             onClick={() => setOpenJiraConfigModal(!openJiraConfigModal)}
           >
-            <SettingsIcon />
+            <SettingsIcon style={{ color: "white" }} />
           </IconButton>
         </div>
       </nav>

@@ -6,6 +6,9 @@
   padding: 8px;
   margin-right: 8px;
   background-color: $color;
+  color: black;
+  box-shadow: 1px 1px 1px 1px;
+  // border: solid 1px;
 }
 
 h3 {
@@ -17,14 +20,14 @@ h3 {
 }
 
 .move {
-  @include trayColor(rgb(233, 233, 178));
+  @include trayColor(ghostwhite);
   .listTitle {
-    background-color: rgb(233, 233, 178);
+    background-color: ghostwhite;
   }
 }
 
 .static {
-  @include trayColor(aliceblue);
+  @include trayColor(rgba(217, 222, 223, 0.945));
 }
 
 .board {
@@ -44,5 +47,8 @@ h3 {
 }
 
 .hoverTray:hover {
-  background-color: rgb(233, 233, 178);
+  background-color: ghostwhite;
+  // border-radius: 20px 0px 0px 0px;
+  // font-size: 20px;
+  // border: solid 1px;
 }

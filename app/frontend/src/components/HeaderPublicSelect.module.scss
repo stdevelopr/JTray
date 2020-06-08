@@ -23,26 +23,40 @@
   color: white;
 }
 
-.addPollButton {
-  background-color: #abff25;
+.addButtonClose {
+  color: white;
   position: absolute;
-  top: 25px;
+  top: 40px;
+  height: 40px;
   left: 130px;
-  padding: 10px;
-  text-align: center;
-  font-size: 16px;
-  margin: 10px;
-  border-radius: 50%;
   z-index: 110;
-  border: solid white;
+  :hover {
+    color: chartreuse;
+    stroke: aliceblue;
+  }
+  // :active:not(path) {
+  //   animation-name: rotate;
+  //   animation-duration: 1s;
+  // }
+}
+
+.addButtonOpen {
+  color: white;
+  position: absolute;
+  top: 40px;
+  height: 40px;
+  left: 130px;
+  z-index: 110;
+  // animation-name: rotate;
+  // animation-duration: 0.5s;
 }
 
 .publicText {
-  position: absolute;
-  top: 0px;
   left: 45px;
   color: white;
   z-index: 10;
+  margin: 5px;
+  display: inline-block;
 }
 
 .logoutButton {
@@ -57,7 +71,7 @@
 }
 
 .selectModalContainer {
-  background-color: darkturquoise;
+  background-color: blue;
   position: absolute;
   z-index: 100;
   width: 100vw;
@@ -65,7 +79,7 @@
 }
 
 .selectCreateModalContainer {
-  background-color: darkturquoise;
+  background-color: violet;
   position: absolute;
   z-index: 100;
   width: 100vw;
@@ -75,6 +89,27 @@
   // animation-duration: 0.5s;
 }
 
+.modal {
+  overflow: auto;
+}
+
+.modalCreate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// .selectCreateModalContainerOpenSelect {
+//   background-color: violet;
+//   position: absolute;
+//   z-index: 100;
+//   width: 100vw;
+//   height: calc(100% - 463px);
+//   margin-top: 400px;
+//   // animation-name: slideSelectionDown;
+//   // animation-duration: 0.5s;
+// }
+
 .closeButton {
   text-align: center;
 }
@@ -83,7 +118,14 @@
   background-color: cadetblue;
   height: 400px;
   overflow: hidden;
-  // animation: openContainer 0.5s;
+  animation: openContainer 0.5s;
+}
+
+.createModalContainerOpenSelect {
+  background-color: red;
+  height: 400px;
+  overflow: hidden;
+  animation: openContainer 0.5s;
 }
 
 // --------------------------------------------
@@ -117,5 +159,14 @@
   }
   to {
     margin-top: 400px;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
   }
 }

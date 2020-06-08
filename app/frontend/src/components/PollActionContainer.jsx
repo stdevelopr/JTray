@@ -7,29 +7,19 @@ import PollSelection from "./PollSelection.jsx";
 import PollCreation from "./PollCreation.jsx";
 
 const PollActionContainer = ({ userInfo, select, create, callBack }) => {
-  const { data: polls, loading } = useQuery(GET_PUBLIC_POLLS, {
-    variables: { userId: userInfo.id }
-  });
-
-  if (loading) return "LOADING...";
-
   return (
     <div>
-      {create ? (
+      {create && (
         <PollCreation
           userId={userInfo.id}
           closeCallBack={callBack ? callBack : () => {}}
         />
-      ) : (
-        ""
       )}
-      {select ? (
+      {select && (
         <PollSelection
-          publicPolls={polls.publicPolls}
+          userId={userInfo.id}
           closeCallback={callBack ? callBack : () => {}}
         ></PollSelection>
-      ) : (
-        ""
       )}
     </div>
   );

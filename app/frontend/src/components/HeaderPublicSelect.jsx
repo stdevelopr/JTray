@@ -2,30 +2,45 @@ import React, { useState } from "react";
 import PollActionContainer from "./PollActionContainer.jsx";
 import styles from "./HeaderPublicSelect.module.scss";
 import { logOut } from "./auth";
+import PublicIcon from "@material-ui/icons/Public";
+import AddIcon from "@material-ui/icons/Add";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import PeopleAltSharpIcon from "@material-ui/icons/PeopleAltSharp";
+import Icon from "@material-ui/core/Icon";
+import Modal from "@material-ui/core/Modal";
+import Fade from "@material-ui/core/Fade";
+import Backdrop from "@material-ui/core/Backdrop";
+// import PollActionContainer from "./PollActionContainer.jsx";
+import PollSelection from "./PollSelection.jsx";
+import PollCreation from "./PollCreation.jsx";
 
 export default function HeaderPublicSelect({ userInfo }) {
-  const [openSelectModal, setopenSelectModal] = useState(false);
+  const [openSelectModal, setOpenSelectModal] = useState(false);
   const [openCreationModal, setOpenCreationModal] = useState(false);
 
   return (
     <div>
       <nav className={styles.navbar}>
         <span>
-          <a href="#" onClick={() => setopenSelectModal(!openSelectModal)}>
-            <svg width="30" height="30">
-              <path d="M0,5 30,5" stroke="#fff" strokeWidth="3" />
-              <path d="M0,14 30,14" stroke="#fff" strokeWidth="3" />
-              <path d="M0,23 30,23" stroke="#fff" strokeWidth="3" />
-            </svg>
-            <h3 className={styles.publicText}>Public</h3>
+          <a href="#" onClick={() => setOpenSelectModal(!openSelectModal)}>
+            <PublicIcon style={{ color: "white" }} />
+
+            <div className={styles.publicText}>Public Polls</div>
           </a>
         </span>
-        <button
-          className={styles.addPollButton}
-          onClick={() => setOpenCreationModal(!openCreationModal)}
+        <div
+          className={
+            openCreationModal ? styles.addButtonOpen : styles.addButtonClose
+          }
         >
-          Add
-        </button>
+          <AddIcon
+            style={{ fontSize: "40px" }}
+            onClick={() => {
+              setOpenCreationModal(!openCreationModal);
+            }}
+          />
+        </div>
         <div className={styles.logo}>
           <h3>JTRAY</h3>
         </div>
@@ -33,39 +48,63 @@ export default function HeaderPublicSelect({ userInfo }) {
           Logout
         </button>
       </nav>
-      {openSelectModal ? (
-        <div
-          className={
-            openCreationModal
-              ? styles.selectCreateModalContainer
-              : styles.selectModalContainer
-          }
+      {openSelectModal && (
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          className={styles.modal}
+          open={openSelectModal}
+          onClose={() => setOpenSelectModal(false)}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 100
+          }}
         >
-          <PollActionContainer
-            userInfo={userInfo}
-            callBack={() => setopenSelectModal(false)}
-            select
-          />
-        </div>
-      ) : (
-        ""
+          <Fade in={openSelectModal}>
+            <div style={{ minHeight: "100%" }}>
+              <PollSelection
+                userId={userInfo.id}
+                closeCallback={() => setOpenSelectModal(false)}
+              />
+              <div
+                onClick={() => setOpenSelectModal(false)}
+                style={{
+                  fontSize: "40px",
+                  position: "fixed",
+                  top: "10px",
+                  right: "50px",
+                  color: "white"
+                }}
+              >
+                X
+              </div>
+            </div>
+          </Fade>
+        </Modal>
       )}
-      {openCreationModal ? (
-        <div className={styles.createModalContainer}>
-          <h2
-            className={styles.closeButton}
-            onClick={() => setOpenCreationModal(false)}
-          >
-            X
-          </h2>
-          <PollActionContainer
-            userInfo={userInfo}
-            callBack={() => setOpenCreationModal(false)}
-            create
-          />
-        </div>
-      ) : (
-        ""
+      {openCreationModal && (
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          className={styles.modalCreate}
+          open={openCreationModal}
+          onClose={() => setOpenCreationModal(false)}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 100
+          }}
+        >
+          <Fade in={openCreationModal}>
+            <div>
+              <PollCreation
+                userId={userInfo.id}
+                closeCallBack={() => setOpenCreationModal(false)}
+              />
+            </div>
+          </Fade>
+        </Modal>
       )}
     </div>
   );

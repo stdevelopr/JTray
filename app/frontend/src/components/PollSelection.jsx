@@ -1,9 +1,16 @@
 import React from "react";
 import styles from "./PollActionContainer.module.scss";
 import { withApollo } from "@apollo/react-hoc";
+import { useQuery } from "@apollo/react-hooks";
 import { GET_MAIN_POLL } from "../graphql/queries.graphql";
+import { GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 
-const PollSelection = ({ publicPolls, closeCallback, client }) => {
+const PollSelection = ({ userId, closeCallback, client }) => {
+  const { data: polls, loading } = useQuery(GET_PUBLIC_POLLS, {
+    variables: { userId: userId }
+  });
+
+  if (loading) return "loading...";
   const selectPollAndCloseSelection = (
     pollId,
     pollTitle,
@@ -28,7 +35,7 @@ const PollSelection = ({ publicPolls, closeCallback, client }) => {
   return (
     <div>
       <div className={styles.pollsParent}>
-        {publicPolls.map(poll => (
+        {polls.publicPolls.map(poll => (
           <div
             className={styles.pollContent}
             pollid={poll.id}

@@ -1,7 +1,7 @@
 .navbar {
   position: relative;
   overflow: hidden;
-  background-color: darkturquoise;
+  background-color: #3d6ad6;
   width: 100vw;
   // background-image: linear-gradient(blue, white);
   height: 60px;
@@ -13,15 +13,15 @@
 }
 
 .myPollsText {
-  position: absolute;
-  top: 0px;
+  // position: absolute;
+  margin: 5px;
   color: white;
   display: inline-block;
 }
 
 .parentHeight {
   position: relative;
-  background-color: lightgreen;
+  background-color: rgb(233, 235, 238);
 }
 
 .sidenav {
@@ -29,7 +29,7 @@
   position: absolute;
   min-height: calc(100vh - 120px);
   height: 100%;
-  background-color: darkturquoise;
+  background-color: #3d6ad6;
   transition: 0.5s;
   a {
     display: block;
