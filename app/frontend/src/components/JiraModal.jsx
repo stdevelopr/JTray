@@ -4,6 +4,9 @@ import { useMutation } from "@apollo/react-hooks";
 import { SAVE_USER_JIRA_INFO } from "../graphql/mutations.graphql";
 import { GET_USER_POLLS } from "../graphql/queries.graphql";
 import HelpIcon from "@material-ui/icons/Help";
+import Domain from "./domain.png";
+import Email from "./email.png";
+import Token from "./token.png";
 
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -30,6 +33,14 @@ export default function JiraModal({
 
   const mod = useRef();
   const helpMod = useRef();
+  let srcHelp = "";
+  if (helpType == "domain") {
+    srcHelp = Domain;
+  } else if (helpType == "email") {
+    srcHelp = Email;
+  } else if (helpType == "token") {
+    srcHelp = Token;
+  }
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -154,7 +165,7 @@ export default function JiraModal({
         }}
       >
         <Fade in={openHelp}>
-          <div className={styles.paper}>{helpType} image...</div>
+          <img src={srcHelp} />
         </Fade>
       </Modal>
     </div>
