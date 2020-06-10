@@ -79,10 +79,10 @@ class Query(graphene.ObjectType):
 
     def resolve_pollTrays(self, info, pollId):
         trays = db.Trays.find({"pollId": pollId}).sort("index",1)
-        poll = db.Polls.find_one({"_id": ObjectId(pollId)})
+        # poll = db.Polls.find_one({"_id": ObjectId(pollId)})
         trays_list = []
         for tray in trays:
-            tray['visibility'] = poll['visibility']
+            # tray['visibility'] = poll['visibility']
             trays_list.append(tray)
         return trays_list
 

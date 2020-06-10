@@ -15,7 +15,6 @@ export const GET_TRAYS = gql `
     pollTrays(pollId: $pollId) {
       id
       title
-      visibility
       cards {
         id
         text

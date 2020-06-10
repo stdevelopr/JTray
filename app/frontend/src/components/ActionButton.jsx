@@ -10,6 +10,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import { GET_TRAYS, GET_USER_INFO } from "../graphql/queries.graphql";
 import { ADD_CARD, ADD_TRAY } from "../graphql/mutations.graphql";
 import styled from "styled-components";
+import { GET_USER_POLLS, GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 
 // styled components
 // ###############################################
@@ -83,6 +84,10 @@ export const AddButton = ({ list, trayId, pollId, userId, admin }) => {
   const addTray = pollId => {
     addTrayHook({
       variables: { title: textAreaState, pollId: pollId, userId },
+      refetchQueries: [
+        { query: GET_USER_POLLS, variables: { userId: userId } },
+        { query: GET_PUBLIC_POLLS }
+      ],
       update: updateTraysCache
     });
   };
