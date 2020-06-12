@@ -39,6 +39,7 @@ const Jtray = ({
           userId={userInfo.id}
           admin={mainPoll.createdByUserId == userInfo.id}
           jiraInfo={userInfo.jiraInfo}
+          visibility={mainPoll.visibility}
         />
       </NavSideMenu>
     </div>

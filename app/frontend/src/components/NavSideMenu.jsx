@@ -37,13 +37,15 @@ const NavSideMenu = ({
     pollId,
     pollTitle,
     pollAnnotations,
-    pollCreatedByUserId
+    pollCreatedByUserId,
+    pollVisibility
   ) => {
     const mainPoll = {
       id: pollId,
       title: pollTitle,
       annotations: pollAnnotations,
       createdByUserId: pollCreatedByUserId,
+      visibility: pollVisibility,
       __typename: "mainPoll"
     };
 
@@ -126,7 +128,8 @@ const NavSideMenu = ({
                       poll.id,
                       poll.title,
                       poll.annotations,
-                      poll.createdByUserId
+                      poll.createdByUserId,
+                      poll.visibility
                     )
                   }
                 >

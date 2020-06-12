@@ -30,7 +30,8 @@ const renderTrays = (
   trayId,
   setTrayId,
   trayTitle,
-  setTrayTitle
+  setTrayTitle,
+  visibility
 ) => {
   return (
     <div>
@@ -111,7 +112,7 @@ const renderTrays = (
                                       admin={admin}
                                       favoritedBy={card.favoritedBy}
                                       jiraInfo={jiraInfo}
-                                      visibility={list.visibility}
+                                      visibility={visibility}
                                     />
                                   </div>
                                 )}
@@ -242,7 +243,7 @@ const updateSwapTrayCache = (client, data, fromIndex, toIndex, pollId) => {
 };
 
 // React component
-export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
+export const TrayBoard = ({ userId, admin, pollId, jiraInfo, visibility }) => {
   const [openTrayModal, setOpenTrayModal] = useState(false);
   const [trayId, setTrayId] = useState(null);
   const [trayTitle, setTrayTitle] = useState(null);
@@ -319,6 +320,7 @@ export const TrayBoard = ({ userId, admin, pollId, jiraInfo }) => {
     trayId,
     setTrayId,
     trayTitle,
-    setTrayTitle
+    setTrayTitle,
+    visibility
   );
 };
