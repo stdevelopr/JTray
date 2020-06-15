@@ -34,10 +34,10 @@ const Enter = ({ userInfo, mainPoll, polls }) => {
       <h2 style={{ color: "white" }}>You have no polls yet... </h2>
       <h2 style={{ color: "white" }}>Create or select one.</h2>
       <div style={{ width: "400px", display: "inline-block" }}>
-        <PollCreation userInfo={userInfo} />
+        <PollCreation userId={userInfo.id} closeCallBack={() => {}} />
       </div>
       <div>
-        <PollSelection userInfo={userInfo} />
+        <PollSelection userId={userInfo.id} />
       </div>
       {/* <PollActionContainer userInfo={userInfo} select create /> */}
     </div>

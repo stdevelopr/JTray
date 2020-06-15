@@ -16,7 +16,12 @@ import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import { withApollo } from "@apollo/react-hoc";
 import Button from "@material-ui/core/Button";
 
-function PollCreation({ userId, closeCallBack, animationClass, client }) {
+function PollCreation({
+  userId,
+  closeCallBack = () => {},
+  animationClass,
+  client
+}) {
   const [pollTitle, setPollTitle] = useState("");
   const [addPollHook, {}] = useMutation(ADD_POLL);
   const [pollVisibility, setPollVisibility] = useState("public");

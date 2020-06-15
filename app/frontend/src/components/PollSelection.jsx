@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/react-hooks";
 import { GET_MAIN_POLL } from "../graphql/queries.graphql";
 import { GET_PUBLIC_POLLS } from "../graphql/queries.graphql";
 
-const PollSelection = ({ userId, closeCallback, client }) => {
+const PollSelection = ({ userId, closeCallback = () => {}, client }) => {
   const { data: polls, loading } = useQuery(GET_PUBLIC_POLLS, {
     variables: { userId: userId }
   });
